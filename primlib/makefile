@@ -1,10 +1,10 @@
 all: testlib
 
 testlib: testlib.o primlib.o
-	gcc -g $^ -o $@ -lm -lSDL -lpthread -lSDL_gfx
+	gcc -I/usr/include/SDL/ -g $^ -o $@ -lm -lSDL -lpthread -lSDL_gfx
 
 .c.o: 
-	gcc -g -Wall -pedantic -std=c99 -c -D_REENTRANT $<
+	gcc -I/usr/include/SDL/ -g -Wall -pedantic -std=c99 -c -D_REENTRANT $<
 
 primlib.o: primlib.c primlib.h
 
