@@ -1,4 +1,4 @@
-
+#include "primlib.h"
 #include"SDL.h"
 #include <stdlib.h>
 
