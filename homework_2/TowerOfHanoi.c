@@ -7,14 +7,24 @@
 #define NUBER_OF_DISCS 4
 #define NUMBER_OF_PEGS 3
 
-typedef struct {
+
+typedef struct Block{
     int sizeOfBlock;
-    int positionOnStock;
+    int positionOnPeg;
+    int pegNumber;
+    bool isInMove;
 };
+
+Block makeStartMatrix(Block startMatrixOfBlocks, int discCuantity, int pegsCuantity)
+{
+
+}
 
 int main()
 {
-    pegs
+    Block matrixOfBlocks[NUBER_OF_DISCS][NUMBER_OF_PEGS];
+
+
     return 0;
 }
 
