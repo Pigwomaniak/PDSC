@@ -11,4 +11,4 @@ primlib.o: primlib.c primlib.h
 testlib.o: testlib.c primlib.h
 
 clean:
-	-rm primlib.o testlib.o testlib
+	-rm primlib.o testlib.o testlibK
