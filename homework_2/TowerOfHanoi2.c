@@ -34,7 +34,7 @@ int getBaseDisc(){
 }
 
 void drawDisc(int x, int y, int blockNumber){
-    filledRect(x-getBaseDisc()/2*blockNumber, y, x+getBaseDisc()/2*blockNumber, y+getHeightPegBase(),GREEN);
+    filledRect(x - getBaseDisc()/2*blockNumber, y, x + getBaseDisc()/2*blockNumber, y + getHeightPegBase(),GREEN);
 }
 
 void drawPeg(int x){
@@ -46,7 +46,7 @@ int positionOfPeg(int peg){
 }
 
 int positionOfDisc(int stockPosition) {
-    int y = screenHeight - (stockPosition + 1) * getHeightPegBase();
+    int y = screenHeight() - (stockPosition + 2) * getHeightPegBase();
     return y;
 }
 
@@ -62,10 +62,10 @@ void drawBasicView(){
 }
 
 int initialMatrix(int initialMatrix[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
-    for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
+    for (int disc = 0; disc <= NUMBER_OF_DISCS; disc++) {
         initialMatrix[0][disc]=NUMBER_OF_DISCS-disc;
     }
-    for (int peg = 1; peg < NUMBER_OF_PEGS; ++peg) {
+    for (int peg = 1; peg < NUMBER_OF_PEGS; peg++) {
         for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
             initialMatrix[peg][disc]=0;
         }
@@ -77,7 +77,7 @@ void drawStaticDiscs(int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
             if(matrixOfPegs[peg][disc]!=0){
-                drawDisc(positionOfDisc(disc),positionOfPeg(peg),matrixOfPegs[peg][disc]);
+                drawDisc(positionOfDisc(disc+1),positionOfPeg(peg+1),matrixOfPegs[peg][disc]);
             }
         }
     }
@@ -178,6 +178,8 @@ int main(){
             executeMove(keyPress1,keyPress2,matrixOfPegs);
         }*/
         //drawStaticDiscs(matrixOfPegs);
+        drawBasicView();
+        drawDisc(positionOfPeg(1), positionOfDisc(1),5);
 
         updateScreen();
         SDL_Delay(REFRESH_TIME_IN_MS);
