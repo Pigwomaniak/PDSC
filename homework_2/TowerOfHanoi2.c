@@ -40,23 +40,24 @@ void drawBasicView(){
 
 }
 
-int initialMatrix(int *initialMatrix){
+int initialMatrix(int initialMatrix[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
     for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
-        *initialMatrix[0][disc]=NUMBER_OF_DISCS-disc;
+        initialMatrix[0][disc]=NUMBER_OF_DISCS-disc;
     }
     for (int peg = 1; peg < NUMBER_OF_PEGS; ++peg) {
         for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
-            *initialMatrix[peg][disc]=0;
+            initialMatrix[peg][disc]=0;
         }
     }
     return 0;
 }
 
-void drawStaticDiscs(int *matrixOfPegs){
+
+void drawStaticDiscs(int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
-            if(*matrixOfPegs[peg][disc]!=0){
-                drawDisc(positionOfDisc(disc),positionOfPeg(peg),*matrixOfPegs[peg][disc]);
+            if(matrixOfPegs[peg][disc]!=0){
+                drawDisc(positionOfDisc(disc),positionOfPeg(peg),matrixOfPegs[peg][disc]);
             }
         }
     }
@@ -120,17 +121,17 @@ int keyDecode(char key){
     return keyOut;
 }
 
-int getPositionOfFirstDisc(int peg, int *matrixOfPegs){
+int getPositionOfFirstDisc(int peg, int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
     int disc=NUMBER_OF_DISCS;
-    while (*matrixOfPegs[peg][disc] == 0){
+    while (matrixOfPegs[peg][disc] == 0){
         disc--;
     }
     return disc;
 }
 
-int checkActionCorrect(int keyPress1, int keyPress2, int *matrixOfPegs){
-    int firstDiscNumber = *matrixOfPegs[keyPress1][getPositionOfFirstDisc(keyPress1, matrixOfPegs)];
-    int secondDiscNumber = *matrixOfPegs[keyPress2][getPositionOfFirstDisc(keyPress2, matrixOfPegs)];
+int checkActionCorrect(int keyPress1, int keyPress2, int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
+    int firstDiscNumber = matrixOfPegs[keyPress1][getPositionOfFirstDisc(keyPress1, matrixOfPegs)];
+    int secondDiscNumber = matrixOfPegs[keyPress2][getPositionOfFirstDisc(keyPress2, matrixOfPegs)];
     if(firstDiscNumber < secondDiscNumber){
         return 1;
     } else{
@@ -138,20 +139,20 @@ int checkActionCorrect(int keyPress1, int keyPress2, int *matrixOfPegs){
     }
 }
 
-int executeMove(int pegFrom, int pegOn, int *matrixOfPegs){
+int executeMove(int pegFrom, int pegOn, int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_DISCS]){
     int movingDiscPosition = getPositionOfFirstDisc(pegFrom, matrixOfPegs);
-    *matrixOfPegs[pegFrom][movingDiscPosition] = 0;
+    matrixOfPegs[pegFrom][movingDiscPosition] = 0;
     return 0;
 }
 
 int main(){
     int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_PEGS];
     initGraph();
-    initialMatrix(&matrixOfPegs);
+    initialMatrix(matrixOfPegs);
     while(!isKeyDown(SDLK_ESCAPE)){
         int keyPress1 = keyDecode(getkey());
         int keyPress2 = keyDecode(getkey());
-        if(checkActionCorrect(keyPress1, keyPress2, &matrixOfPegs)){
+        if(checkActionCorrect(keyPress1, keyPress2, matrixOfPegs)){
 
         }
     }
