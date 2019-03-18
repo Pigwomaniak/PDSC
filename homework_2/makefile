@@ -1,6 +1,6 @@
-all: TowerOfHanoi
+all: TowerOfHanoi2
 
-TowerOfHanoi: TowerOfHanoi.o primlib.o
+TowerOfHanoi: TowerOfHanoi2.o primlib.o
 	gcc -I/usr/include/SDL/ -g $^ -o $@ -lm -lSDL -lpthread -lSDL_gfx
 
 .c.o: 
@@ -8,7 +8,7 @@ TowerOfHanoi: TowerOfHanoi.o primlib.o
 
 primlib.o: primlib.c primlib.h
 
-TowerOfHanoi.o: TowerOfHanoi.c primlib.h
+TowerOfHanoi2.o: TowerOfHanoi2.c primlib.h
 
 clean:
-	-rm primlib.o TowerOfHanoi.o TowerOfHanoi
+	-rm primlib.o TowerOfHanoi2.o TowerOfHanoi2

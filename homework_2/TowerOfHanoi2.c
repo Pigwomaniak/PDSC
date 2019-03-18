@@ -14,7 +14,7 @@
 
 
 void drawDisc(int x, int y, int blockNumber){
-    rect(x-BASE_OF_DISC/2*blockNumber, y, x+BASE_OF_DISC/2*blockNumber, y+HEIGHT_OF_PEG_BASE);
+    rect(x-BASE_OF_DISC/2*blockNumber, y, x+BASE_OF_DISC/2*blockNumber, y+HEIGHT_OF_PEG_BASE,GREEN);
 }
 
 void drawPeg(int x){
@@ -40,23 +40,23 @@ void drawBasicView(){
 
 }
 
-int initialMatrix(int *initialMatrix[][]){
+int initialMatrix(int *initialMatrix){
     for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
-        *initialMatrix[0][disc]=NUMBER_OF_DISCS-disc;
+        initialMatrix[0][disc]=NUMBER_OF_DISCS-disc;
     }
     for (int peg = 1; peg < NUMBER_OF_PEGS; ++peg) {
         for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
-            *initialMatrix[peg][disc]=0;
+            initialMatrix[peg][disc]=0;
         }
     }
     return 0;
 }
 
-void drawStaticDiscs(int *matrixOfPegs[][]){
+void drawStaticDiscs(int *matrixOfPegs){
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         for (int disc = 0; disc < NUMBER_OF_DISCS; ++disc) {
-            if(*matrixOfPegs[peg][disc]!=0){
-                drawDisc(positionOfDisc(disc),positionOfPeg(peg),*matrixOfPegs[peg][disc]);
+            if(matrixOfPegs[peg][disc]!=0){
+                drawDisc(positionOfDisc(disc),positionOfPeg(peg),matrixOfPegs[peg][disc]);
             }
         }
     }
@@ -85,7 +85,7 @@ int moveDiscAnimation(int startPeg, int startPos, int endPeg, int endPos, int bl
 
 int keyDecode(char key){
     int keyOut;
-    switch key{
+    switch (key){
         case SDLK_1:
             keyOut=1;
             break;
@@ -93,44 +93,44 @@ int keyDecode(char key){
             keyOut=2;
             break;
         case SDLK_3:
-            keyout=3;
+            keyOut=3;
             break;
         case SDLK_4:
-            keyout=4;
+            keyOut=4;
             break;
         case SDLK_5:
-            keyout=5;
+            keyOut=5;
             break;
         case SDLK_6:
-            keyout=6;
+            keyOut=6;
             break;
         case SDLK_7:
-            keyout=7;
+            keyOut=7;
             break;
         case SDLK_8:
-            keyout=8;
+            keyOut=8;
             break;
         case SDLK_9:
-            keyout=9;
+            keyOut=9;
             break;
         default:
-            keyout=0;
+            keyOut=0;
             break;
         }
     return keyOut;
 }
 
-int getPositionOfFirstDisc(int peg, int *matrixOfPegs[][]){
+int getPositionOfFirstDisc(int peg, int *matrixOfPegs){
     int disc=NUMBER_OF_DISCS;
-    while (*matrixOfPegs[peg][disc] == 0){
+    while (matrixOfPegs[peg][disc] == 0){
         disc--;
     }
     return disc;
 }
 
 int checkActionCorrect(int keyPress1, int keyPress2, int *matrixOfPegs){
-    int firstDiscNumber = matrixOfPegs[keyPress1][getPositionOfFirstDisc(keyPress1, *matrixOfPegs)];
-    int secondDiscNumber = matrixOfPegs[keyPress2][getPositionOfFirstDisc(keyPress2, *matrixOfPegs)];
+    int firstDiscNumber = matrixOfPegs[keyPress1][getPositionOfFirstDisc(keyPress1, matrixOfPegs)];
+    int secondDiscNumber = matrixOfPegs[keyPress2][getPositionOfFirstDisc(keyPress2, matrixOfPegs)];
     if(firstDiscNumber < secondDiscNumber){
         return 1;
     } else{
@@ -139,20 +139,20 @@ int checkActionCorrect(int keyPress1, int keyPress2, int *matrixOfPegs){
 }
 
 int executeMove(int pegFrom, int pegOn, int *matrixOfPegs){
-    int movingDiscPosition = getPositionOfFirstDisc(pegFrom, *matrixOfPegs);
+    int movingDiscPosition = getPositionOfFirstDisc(pegFrom, matrixOfPegs);
     matrixOfPegs[pegFrom][movingDiscPosition] = 0;
     return 0;
 }
 
-int main {
+int main(){
     int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_PEGS];
     initGraph();
-    initialMatrix(&matrixOfPegs);
+    initialMatrix(matrixOfPegs);
     while(!isKeyDown(SDLK_ESCAPE)){
         int keyPress1 = keyDecode(getkey());
         int keyPress2 = keyDecode(getkey());
-        if(checkActionCorrect(keyPress1, keyPress2, &matrixOfPegs)){
-            start move
+        if(checkActionCorrect(keyPress1, keyPress2, matrixOfPegs)){
+
         }
     }
     return 0;
