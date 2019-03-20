@@ -2,18 +2,16 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define NUMBER_OF_DISCS 6
-#define NUMBER_OF_PEGS 3
-
+#define NUMBER_OF_DISCS 8
+#define NUMBER_OF_PEGS 6
 #define HEIGHT_OF_PEG_BASE 0.05
 #define HEIGHT_OF_PEG_STICK 0.6
-#define WIDTH_OF_PEG_STICK 0.01
+#define WIDTH_OF_PEG_STICK 0.005
 #define BASE_OF_DISC 0.04
 #define HEIGHT_OF_FLY 0.7
-#define REFRESH_TIME_IN_MS 10
+#define REFRESH_TIME_IN_MS 2
 
-
-static int top[NUMBER_OF_PEGS]={0};             /* first empty slot on the stack */
+static int top[NUMBER_OF_PEGS];             /* first empty slot on the stack */
 static int size = NUMBER_OF_DISCS;
 static int matrixOfPegs[NUMBER_OF_PEGS][NUMBER_OF_DISCS];
 
@@ -45,7 +43,7 @@ int getWidthPegStick(){
 }
 
 int getBaseDisc(){
-    return (screenWidth()*BASE_OF_DISC);
+    return ((screenWidth()/(NUMBER_OF_PEGS))/(NUMBER_OF_DISCS*2));
 }
 
 void drawDisc(int x, int y, int blockNumber){
@@ -68,23 +66,18 @@ int positionOfDisc(int stockPosition) {
 void drawBasicView(){
     filledRect(0, 0, screenWidth(), screenHeight(), BLACK);
     filledRect(0,screenHeight(),screenWidth(), screenHeight() - getHeightPegBase(),GREEN);
-
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         drawPeg(positionOfPeg(peg));
     }
-
-
 }
 
 int initialMatrix(){
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         top[peg]=0;
     }
-
     for (int disc = NUMBER_OF_DISCS; disc > 0; disc--) {
         push(disc, 0);
     }
-
     return 0;
 }
 
