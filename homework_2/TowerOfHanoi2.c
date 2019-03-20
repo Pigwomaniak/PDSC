@@ -7,12 +7,10 @@
 
 #define HEIGHT_OF_PEG_BASE 0.05
 #define HEIGHT_OF_PEG_STICK 0.6
-#define DISTANCE_BETWEEN_PEGS 0.02
 #define WIDTH_OF_PEG_STICK 0.01
 #define BASE_OF_DISC 0.04
 #define HEIGHT_OF_FLY 0.7
-#define FLYING_SPEED 2
-#define REFRESH_TIME_IN_MS 50
+#define REFRESH_TIME_IN_MS 10
 
 
 static int top[NUMBER_OF_PEGS]={0};             /* first empty slot on the stack */
@@ -42,10 +40,6 @@ int getHeightPegStick(){
     return (screenHeight()*HEIGHT_OF_PEG_STICK);
 }
 
-int getDistanceBetweenPegs(){
-    return (screenWidth()*DISTANCE_BETWEEN_PEGS);
-}
-
 int getWidthPegStick(){
     return (screenWidth()*WIDTH_OF_PEG_STICK);
 }
@@ -63,7 +57,7 @@ void drawPeg(int x){
 }
 
 int positionOfPeg(int peg){
-    return (peg*screenWidth()/(NUMBER_OF_PEGS+1)+getDistanceBetweenPegs());
+    return ((peg+1)*screenWidth()/(NUMBER_OF_PEGS+1));
 }
 
 int positionOfDisc(int stockPosition) {
@@ -75,7 +69,7 @@ void drawBasicView(){
     filledRect(0, 0, screenWidth(), screenHeight(), BLACK);
     filledRect(0,screenHeight(),screenWidth(), screenHeight() - getHeightPegBase(),GREEN);
 
-    for (int peg = 1; peg <= NUMBER_OF_PEGS; ++peg) {
+    for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         drawPeg(positionOfPeg(peg));
     }
 
@@ -97,7 +91,7 @@ int initialMatrix(){
 void drawStaticDiscs(){
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         for (int disc = 0; disc < top[peg]; ++disc) {
-            drawDisc(positionOfPeg(peg+1),positionOfDisc(disc),matrixOfPegs[peg][disc]);
+            drawDisc(positionOfPeg(peg),positionOfDisc(disc),matrixOfPegs[peg][disc]);
         }
     }
 }
@@ -129,7 +123,7 @@ int moveDiscAnimation(int startPeg, int startPos, int endPeg, int endPos, int di
         posX += moveDirection(startPeg,endPeg);
         updateAnimation(posX, posY, discNumber);
     }
-    while (posY != positionOfDisc(endPos)){
+    while (posY <= positionOfDisc(endPos)){
         posY++;
         updateAnimation(posX, posY, discNumber);
     }
