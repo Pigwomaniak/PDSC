@@ -126,41 +126,50 @@ int keyDecode(char key){
     int keyOut;
     switch (key){
         case SDLK_1:
-            keyOut=1;
+            keyOut = 1;
             break;
         case SDLK_2:
-            keyOut=2;
+            keyOut = 2;
             break;
         case SDLK_3:
-            keyOut=3;
+            keyOut = 3;
             break;
         case SDLK_4:
-            keyOut=4;
+            keyOut = 4;
             break;
         case SDLK_5:
-            keyOut=5;
+            keyOut = 5;
             break;
         case SDLK_6:
-            keyOut=6;
+            keyOut = 6;
             break;
         case SDLK_7:
-            keyOut=7;
+            keyOut = 7;
             break;
         case SDLK_8:
-            keyOut=8;
+            keyOut = 8;
             break;
         case SDLK_9:
-            keyOut=9;
+            keyOut = 9;
             break;
         default:
-            keyOut=0;
+            keyOut = 0;
             break;
         }
     return keyOut;
 }
 
+int keyDecode2 (char key){
+    int keyOut = key - SDLK_1 + 1;
+    if ((keyOut < 1) || (keyOut > 9)){
+        return 0;
+    } else {
+        return keyOut;
+    }
+}
+
 int checkActionCorrect(int pressPeg1, int pressPeg2){
-    if((pressPeg1>=NUMBER_OF_PEGS) || (pressPeg2>=NUMBER_OF_PEGS) || (pressPeg1 < 0) || (pressPeg2 < 0)){
+    if((pressPeg1 >= NUMBER_OF_PEGS) || (pressPeg2 >= NUMBER_OF_PEGS) || (pressPeg1 < 0) || (pressPeg2 < 0)){
         return 0;
     }
     if(top[pressPeg1] == 0){
