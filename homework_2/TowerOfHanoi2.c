@@ -122,7 +122,7 @@ int moveDiscAnimation(int startPeg, int startPos, int endPeg, int endPos, int di
     }
 }
 
-int keyDecode(char key){
+int keyDecode2(char key){
     int keyOut;
     switch (key){
         case SDLK_1:
@@ -159,7 +159,7 @@ int keyDecode(char key){
     return keyOut;
 }
 
-int keyDecode2 (char key){
+int keyDecode (char key){
     int keyOut = key - SDLK_1 + 1;
     if ((keyOut < 1) || (keyOut > 9)){
         return 0;
@@ -199,8 +199,8 @@ int main(){
         drawBasicView();
         drawStaticDiscs();
         updateScreen();
-        int pressPeg1 = keyDecode(getkey()) - 1;
-        int pressPeg2 = keyDecode(getkey()) - 1;
+        int pressPeg1 = keyDecode2(getkey()) - 1;
+        int pressPeg2 = keyDecode2(getkey()) - 1;
         if(checkActionCorrect(pressPeg1, pressPeg2)){
             executeMove(pressPeg1, pressPeg2);
         }
