@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #define NUMBER_OF_DISCS 8
-#define NUMBER_OF_PEGS 6
+#define NUMBER_OF_PEGS 3
 #define HEIGHT_OF_PEG_BASE 0.05
 #define HEIGHT_OF_PEG_STICK 0.6
 #define WIDTH_OF_PEG_STICK 0.005
@@ -47,7 +47,7 @@ int getBaseDisc(){
 }
 
 void drawDisc(int x, int y, int blockNumber){
-    filledRect(x - getBaseDisc() / 2 * blockNumber, y, x + getBaseDisc() / 2 * blockNumber, y + getHeightPegBase(), BLUE);
+    filledRect(x - getBaseDisc() / 2 * blockNumber, y, x + getBaseDisc() / 2 * blockNumber, y + getHeightPegBase(), MAGENTA);
 }
 
 void drawPeg(int x){
@@ -65,7 +65,7 @@ int positionOfDisc(int stockPosition) {
 
 void drawBasicView(){
     filledRect(0, 0, screenWidth(), screenHeight(), BLACK);
-    filledRect(0, screenHeight(), screenWidth(), screenHeight() - getHeightPegBase(), GREEN);
+    filledRect(0, screenHeight(), screenWidth(), screenHeight() - getHeightPegBase() + 1, GREEN);
     for (int peg = 0; peg < NUMBER_OF_PEGS; ++peg) {
         drawPeg(positionOfPeg(peg));
     }
