@@ -14,6 +14,10 @@
 #define NUMBER_OF_BLOCKS 7
 #define NUMBER_OF_ROTATIONS 4
 #define START_FALL (screenWidth()/2)
+#define MOV_RIGHT 1
+#define MOV_LEFT 2
+#define MOV_DOWN 3
+#define ROTATE 4
 
 typedef struct block {
     int kind;
@@ -48,6 +52,7 @@ int isOutOfBox(block copyFallingBlock);
 bool isBlockCollision(block copyFlyingBlock);
 void convertDirections(int movDirection, int *movX, int *movY);
 int move();
+int updateBlock(int movDirection, int newRotation);
 
 
 
@@ -79,13 +84,8 @@ int main() {
     }
     start();
     while (!isKeyDown(SDLK_ESCAPE)) {
-        draftBlock();
+        //draftBlock();
         drawTetris();
-        fallingBlock.kind = 1;
-        fallingBlock.rotation = 1;
-        fallingBlock.yPosition = 19;
-        fallingBlock.xPosition = 5;
-        findMid();
         drawDynamicBlock();
         move();
         drawNextBlock();
@@ -214,10 +214,10 @@ int isOutOfBox(block copyFallingBlock) {
         }
     }
     if (downOut) {
-        return 2;
+        return 1;
     }
     if (leftOut || rightOut) {
-        return 1;
+        return 2;
     } else {
         return 0;
     }
@@ -239,21 +239,27 @@ bool isBlockCollision(block copyFallingBlock) {
 
 void convertDirections(int movDirection, int *movX, int *movY) {
     switch (movDirection) {
-        case 2:
+        case MOV_DOWN:
             *movY = - 1;
             break;
-        case 4:
+        case MOV_LEFT:
             *movX = - 1;
             break;
-        case 6:
+        case MOV_RIGHT:
             *movX = 1;
             break;
-        case 8:
-            *movY = 1;
     }
 }
 
-
+int updateBlock(int movDirection, int newRotation) {
+    int movX = 0;
+    int movY = 0;
+    convertDirections(movDirection, &movX, &movY);
+    fallingBlock.xPosition += movX;
+    fallingBlock.yPosition += movY;
+    fallingBlock.rotation = newRotation;
+    return 0;
+}
 
 int isCollision(int movDirection, int rotation) {
     block copyFallingBlock = fallingBlock;
@@ -263,10 +269,10 @@ int isCollision(int movDirection, int rotation) {
     copyFallingBlock.xPosition = copyFallingBlock.xPosition + movX;
     copyFallingBlock.yPosition = copyFallingBlock.yPosition + movY;
     copyFallingBlock.rotation = rotation;
-    if (isOutOfBox(copyFallingBlock) == 2) {
-        return 2;
+    int outOfBox = isOutOfBox(copyFallingBlock);
+    if (outOfBox) {
+        return outOfBox;
     }
-    if (isOutOfBox(copyFallingBlock))
     if (isBlockCollision(copyFallingBlock) == 1) {
         return 1;
     }
@@ -294,6 +300,7 @@ void drawDynamicBlock() {
 bool writeInBlock(int moveDirection, int newRotation) {
     findMid();
     if (!isCollision(moveDirection , newRotation)) {
+        /*
         for (int line = 0; line < BLOCK_SIZE; ++line) {
             for (int column = 0; column < BLOCK_SIZE; ++column) {
                 if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
@@ -301,6 +308,10 @@ bool writeInBlock(int moveDirection, int newRotation) {
                 }
             }
         }
+         */
+        updateBlock(moveDirection, newRotation);
+        drawDynamicBlock();
+
         return true;
     } else {
         return false;
@@ -320,7 +331,7 @@ int makeBlockStatic() {
 
 int move() {
     int direction = 2;
-    int newRotation = 0;
+    int newRotation = ROTATE;
     if(writeInBlock(direction, newRotation)) {
         return 1;
     } else {
@@ -329,4 +340,26 @@ int move() {
         drawNextBlock();
     }
     return 0;
+}
+
+int detectMove() {
+    int move;
+    char key = getkey();
+    switch (key) {
+        case SDLK_SPACE:
+            move = ROTATE;
+            break;
+        case SDLK_a:
+            move = MOV_LEFT;
+            break;
+        case SDLK_d:
+            move = MOV_RIGHT;
+            break;
+        case SDLK_s:
+            move = MOV_DOWN;
+            break;
+        default:
+            move = 0;
+    }
+    return move;
 }
