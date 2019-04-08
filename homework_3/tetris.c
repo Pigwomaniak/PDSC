@@ -51,8 +51,9 @@ int isCollision(int movDirection, int rotation);
 int isOutOfBox(block copyFallingBlock);
 bool isBlockCollision(block copyFlyingBlock);
 void convertDirections(int movDirection, int *movX, int *movY);
-int move();
+int moveProcedure();
 int updateBlock(int movDirection, int newRotation);
+int detectMove();
 
 
 
@@ -84,11 +85,12 @@ int main() {
     }
     start();
     while (!isKeyDown(SDLK_ESCAPE)) {
-        //draftBlock();
+        int move = detectMove();
+        if(move != -1) {
+        moveProcedure()
+        }
+    }
         drawTetris();
-        drawDynamicBlock();
-        move();
-        drawNextBlock();
         getkey();
         updateScreen();
     }
@@ -97,21 +99,10 @@ int main() {
     return 0;
 }
 
-int getXSideLeft() {
-    return (((screenWidth() - TETRIS_LENGTH * SQUARE_SIZE) / 2) - 1);
-}
-int getXSideRight() {
-    return (screenWidth() - (screenWidth() - TETRIS_LENGTH * SQUARE_SIZE) / 2);
-}
-
-int getYSize() {
-    return (screenHeight() - TETRIS_HEIGHT * SQUARE_SIZE);
-}
-
-void drawBasicView() {
-    filledRect(0, 0, screenWidth(), screenHeight(), BLACK);
-    line(getXSideLeft(), screenHeight(), getXSideLeft(), getYSize(), YELLOW);
-    line(getXSideRight(), screenHeight(), getXSideRight(), getYSize(), YELLOW);
+void start() {
+    startTetris();
+    draftBlock();
+    draftBlock();
 }
 
 void startTetris() {
@@ -122,8 +113,92 @@ void startTetris() {
     }
 }
 
-void drawSingleSquare(int x, int y, int color) {
-    filledRect(x, y, x + SQUARE_SIZE - 1, y + SQUARE_SIZE - 1, color);
+void draftBlock() {
+    fallingBlock = nextBlock;
+    nextBlock.kind = rand() % NUMBER_OF_BLOCKS;
+    nextBlock.rotation = rand() % NUMBER_OF_ROTATIONS;
+    fallingBlock.xPosition = TETRIS_LENGTH / 2;
+    fallingBlock.yPosition = TETRIS_HEIGHT - SQUARE_SIZE;
+}
+
+int moveProcedure() {
+    int direction = 2;
+    int newRotation = ROTATE;
+    if(writeInBlock(direction, newRotation)) {
+        return 1;
+    } else {
+        makeBlockStatic();
+        draftBlock();
+        drawNextBlock();
+    }
+    return 0;
+}
+
+int detectMove() {
+    int move;
+    char key = pollkey();
+    switch (key) {
+        case SDLK_SPACE:
+            move = ROTATE;
+            break;
+        case SDLK_a:
+            move = MOV_LEFT;
+            break;
+        case SDLK_d:
+            move = MOV_RIGHT;
+            break;
+        case SDLK_s:
+            move = MOV_DOWN;
+            break;
+        default:
+            move = 0;
+    }
+    return move;
+}
+
+void drawTetris() {
+    drawBasicView();
+    for (int line = 0; line < TETRIS_HEIGHT; ++line) {
+        for (int column = 0; column < TETRIS_LENGTH; ++column) {
+            drawSingleSquare(getXPositionSquare(column), getYPositionSquare(line), detectColor(tetrisMatrix[line][column]));
+        }
+    }
+    drawDynamicBlock();
+    drawNextBlock();
+}
+
+void drawBasicView() {
+    filledRect(0, 0, screenWidth(), screenHeight(), BLACK);
+    line(getXSideLeft(), screenHeight(), getXSideLeft(), getYSize(), YELLOW);
+    line(getXSideRight(), screenHeight(), getXSideRight(), getYSize(), YELLOW);
+}
+
+void drawNextBlock() {
+    int nexBlockXPosition = getXSideRight() + (screenWidth() - getXSideRight()) / 2 - 2 * SQUARE_SIZE;
+    for (int line = 0; line < BLOCK_SIZE; ++line) {
+        for (int column = 0; column < BLOCK_SIZE; ++column) {
+            int color = detectColor(blocks[nextBlock.kind][nextBlock.rotation][line][column]);
+            drawSingleSquare(nexBlockXPosition + column * SQUARE_SIZE, getYSize() + line * SQUARE_SIZE, color);
+        }
+    }
+}
+
+void drawDynamicBlock() {
+    for (int line = 0; line < BLOCK_SIZE; ++line) {
+        for (int column = 0; column < BLOCK_SIZE; ++column) {
+            int color = detectColor(blocks[nextBlock.kind][nextBlock.rotation][line][column]);
+            if(color != BLACK);
+            drawSingleSquare(getXDynamicSquare(column), getYDynamicSquare(line), color);
+        }
+    }
+}
+
+int getXPositionSquare(int x) {
+    return (getXSideLeft() + 1 + x * SQUARE_SIZE);
+}
+
+int getYPositionSquare(int y) {
+    return (screenHeight() - (y + 1) * SQUARE_SIZE);
 }
 
 int detectColor(int color) {
@@ -141,47 +216,36 @@ int detectColor(int color) {
     }
 }
 
-int getXPositionSquare(int x) {
-    return (getXSideLeft() + 1 + x * SQUARE_SIZE);
+int getXSideLeft() {
+    return (((screenWidth() - TETRIS_LENGTH * SQUARE_SIZE) / 2) - 1);
 }
 
-int getYPositionSquare(int y) {
-    return (screenHeight() - (y + 1) * SQUARE_SIZE);
+int getXSideRight() {
+    return (screenWidth() - (screenWidth() - TETRIS_LENGTH * SQUARE_SIZE) / 2);
 }
 
-void drawTetris() {
-    drawBasicView();
-    for (int line = 0; line < TETRIS_HEIGHT; ++line) {
-        for (int column = 0; column < TETRIS_LENGTH; ++column) {
-            drawSingleSquare(getXPositionSquare(column), getYPositionSquare(line), detectColor(tetrisMatrix[line][column]));
-        }
-    }
-    drawDynamicBlock();
+int getYSize() {
+    return (screenHeight() - TETRIS_HEIGHT * SQUARE_SIZE);
 }
 
-void drawNextBlock() {
-    int nexBlockXPosition = getXSideRight() + (screenWidth() - getXSideRight()) / 2 - 2 * SQUARE_SIZE;
-    for (int line = 0; line < BLOCK_SIZE; ++line) {
-        for (int column = 0; column < BLOCK_SIZE; ++column) {
-            int color = detectColor(blocks[nextBlock.kind][nextBlock.rotation][line][column]);
-            drawSingleSquare(nexBlockXPosition + column * SQUARE_SIZE, getYSize() + line * SQUARE_SIZE, color);
-        }
-    }
+void drawSingleSquare(int x, int y, int color) {
+    filledRect(x, y, x + SQUARE_SIZE - 1, y + SQUARE_SIZE - 1, color);
 }
 
-void draftBlock() {
-    fallingBlock = nextBlock;
-    nextBlock.kind = rand() % NUMBER_OF_BLOCKS;
-    nextBlock.rotation = rand() % NUMBER_OF_ROTATIONS;
-    fallingBlock.xPosition = TETRIS_LENGTH / 2;
-    fallingBlock.yPosition = TETRIS_HEIGHT - SQUARE_SIZE;
+int getXDynamicSquare(int line) {
+    return (getXSideLeft() + (fallingBlock.xPosition - fallingBlock.midXPos + line) * SQUARE_SIZE);
 }
 
-void start() {
-    startTetris();
-    draftBlock();
-    draftBlock();
+int getYDynamicSquare(int column) {
+    return (screenHeight() - (fallingBlock.yPosition - fallingBlock.midYPos +column) * SQUARE_SIZE);
 }
+
+
+
+
+
+
+
 
 void findMid() {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
@@ -279,23 +343,9 @@ int isCollision(int movDirection, int rotation) {
     return 0;
 }
 
-int getXDynamicSquare(int line) {
-    return (getXSideLeft() + (fallingBlock.xPosition - fallingBlock.midXPos + line) * SQUARE_SIZE);
-}
 
-int getYDynamicSquare(int column) {
-    return (screenHeight() - (fallingBlock.yPosition - fallingBlock.midYPos +column) * SQUARE_SIZE);
-}
 
-void drawDynamicBlock() {
-    for (int line = 0; line < BLOCK_SIZE; ++line) {
-            for (int column = 0; column < BLOCK_SIZE; ++column) {
-            int color = detectColor(blocks[nextBlock.kind][nextBlock.rotation][line][column]);
-            if(color != BLACK);
-            drawSingleSquare(getXDynamicSquare(column), getYDynamicSquare(line), color);
-        }
-    }
-}
+
 
 bool writeInBlock(int moveDirection, int newRotation) {
     findMid();
@@ -329,37 +379,6 @@ int makeBlockStatic() {
     return 0;
 }
 
-int move() {
-    int direction = 2;
-    int newRotation = ROTATE;
-    if(writeInBlock(direction, newRotation)) {
-        return 1;
-    } else {
-        makeBlockStatic();
-        draftBlock();
-        drawNextBlock();
-    }
-    return 0;
-}
 
-int detectMove() {
-    int move;
-    char key = getkey();
-    switch (key) {
-        case SDLK_SPACE:
-            move = ROTATE;
-            break;
-        case SDLK_a:
-            move = MOV_LEFT;
-            break;
-        case SDLK_d:
-            move = MOV_RIGHT;
-            break;
-        case SDLK_s:
-            move = MOV_DOWN;
-            break;
-        default:
-            move = 0;
-    }
-    return move;
-}
+
+
