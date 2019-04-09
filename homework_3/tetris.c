@@ -18,6 +18,8 @@
 #define MOV_LEFT 2
 #define MOV_DOWN 3
 #define ROTATE 4
+#define BLOCK_IS_DOWN 1
+#define BLOCK_IS_SIDE 2
 
 typedef struct block {
     int kind;
@@ -51,11 +53,10 @@ int isCollision(int movDirection, int rotation);
 int isOutOfBox(block copyFallingBlock);
 bool isBlockCollision(block copyFlyingBlock);
 void convertDirections(int movDirection, int *movX, int *movY);
-int moveProcedure();
+int moveProcedure(int move);
 int updateBlock(int movDirection, int newRotation);
 int detectMove();
-
-
+int makeBlockStatic();
 
 
 static block fallingBlock;
@@ -64,20 +65,6 @@ static block nextBlock;
 static int tetrisMatrix[TETRIS_HEIGHT][TETRIS_LENGTH];
 extern const char blocks [7 /*kind */ ][4 /* rotation */ ][4][4];
 
-/*
- *      drawTetris();
-        fallingBlock.kind = 1;
-        fallingBlock.rotation = 1;
-        fallingBlock.yPosition = 15;
-        fallingBlock.xPosition = 5;
-        findMid();
-        drawDynamicBlock();
- *
- */
-
-
-
-
 int main() {
 
     if(initGraph()) {
@@ -85,17 +72,14 @@ int main() {
     }
     start();
     while (!isKeyDown(SDLK_ESCAPE)) {
-        int move = detectMove();
-        if(move != -1) {
-        moveProcedure()
+        int move = MOV_DOWN;//detectMove();
+        if (move != -1) {
+            moveProcedure(move);
         }
-    }
         drawTetris();
         getkey();
         updateScreen();
     }
-
-
     return 0;
 }
 
@@ -118,20 +102,7 @@ void draftBlock() {
     nextBlock.kind = rand() % NUMBER_OF_BLOCKS;
     nextBlock.rotation = rand() % NUMBER_OF_ROTATIONS;
     fallingBlock.xPosition = TETRIS_LENGTH / 2;
-    fallingBlock.yPosition = TETRIS_HEIGHT - SQUARE_SIZE;
-}
-
-int moveProcedure() {
-    int direction = 2;
-    int newRotation = ROTATE;
-    if(writeInBlock(direction, newRotation)) {
-        return 1;
-    } else {
-        makeBlockStatic();
-        draftBlock();
-        drawNextBlock();
-    }
-    return 0;
+    fallingBlock.yPosition = TETRIS_HEIGHT - 1;
 }
 
 int detectMove() {
@@ -151,10 +122,38 @@ int detectMove() {
             move = MOV_DOWN;
             break;
         default:
-            move = 0;
+            move = -1;
     }
     return move;
 }
+
+int moveProcedure(int move) {
+    int direction = 0;
+    int newRotation = fallingBlock.rotation;
+    if(move != ROTATE) {
+        direction = move;
+    } else {
+        newRotation = (fallingBlock.rotation + 1) % 4;
+    }
+    writeInBlock(direction, newRotation);
+    return 0;
+}
+
+bool writeInBlock(int moveDirection, int newRotation) {
+    findMid();
+    int blockStatus = isCollision(moveDirection , newRotation);
+    if (!blockStatus) {
+        updateBlock(moveDirection, newRotation);
+        drawDynamicBlock();
+        return 1;
+    } else if(blockStatus == BLOCK_IS_DOWN) {
+        makeBlockStatic();
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 
 void drawTetris() {
     drawBasicView();
@@ -278,10 +277,10 @@ int isOutOfBox(block copyFallingBlock) {
         }
     }
     if (downOut) {
-        return 1;
+        return BLOCK_IS_DOWN;
     }
     if (leftOut || rightOut) {
-        return 2;
+        return BLOCK_IS_SIDE;
     } else {
         return 0;
     }
@@ -337,8 +336,8 @@ int isCollision(int movDirection, int rotation) {
     if (outOfBox) {
         return outOfBox;
     }
-    if (isBlockCollision(copyFallingBlock) == 1) {
-        return 1;
+    if (isBlockCollision(copyFallingBlock)) {
+        return BLOCK_IS_DOWN;
     }
     return 0;
 }
@@ -347,26 +346,6 @@ int isCollision(int movDirection, int rotation) {
 
 
 
-bool writeInBlock(int moveDirection, int newRotation) {
-    findMid();
-    if (!isCollision(moveDirection , newRotation)) {
-        /*
-        for (int line = 0; line < BLOCK_SIZE; ++line) {
-            for (int column = 0; column < BLOCK_SIZE; ++column) {
-                if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
-                    tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos][fallingBlock.xPosition - fallingBlock.midXPos] = blocks[fallingBlock.kind][fallingBlock.rotation][line][column];
-                }
-            }
-        }
-         */
-        updateBlock(moveDirection, newRotation);
-        drawDynamicBlock();
-
-        return true;
-    } else {
-        return false;
-    }
-}
 
 int makeBlockStatic() {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
