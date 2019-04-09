@@ -189,7 +189,7 @@ int isOutOfBox(block copyFallingBlock) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
             if (blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] != 0) {
-                if ((copyFallingBlock.xPosition - copyFallingBlock.midXPos + column) >= TETRIS_LENGTH) {
+                if ((copyFallingBlock.xPosition - copyFallingBlock.midXPos + column) > TETRIS_LENGTH) {
                     rightOut = true;
                 }
                 if ((copyFallingBlock.yPosition - copyFallingBlock.midYPos + line) < 0) {
