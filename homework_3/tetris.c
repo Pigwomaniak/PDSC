@@ -72,13 +72,13 @@ int main() {
     }
     start();
     while (!isKeyDown(SDLK_ESCAPE)) {
-        int move = MOV_DOWN;//detectMove();
+        int move = detectMove();
         if (move != -1) {
             moveProcedure(move);
         }
         drawTetris();
-        getkey();
         updateScreen();
+        getkey();
     }
     return 0;
 }
@@ -106,25 +106,19 @@ void draftBlock() {
 }
 
 int detectMove() {
-    int move;
-    char key = pollkey();
-    switch (key) {
-        case SDLK_SPACE:
-            move = ROTATE;
-            break;
-        case SDLK_a:
-            move = MOV_LEFT;
-            break;
-        case SDLK_d:
-            move = MOV_RIGHT;
-            break;
-        case SDLK_s:
-            move = MOV_DOWN;
-            break;
-        default:
-            move = -1;
-    }
-    return move;
+   if (isKeyDown(SDLK_SPACE)) {
+       return ROTATE;
+   }
+   if (isKeyDown(SDLK_a)) {
+       return MOV_LEFT;
+   }
+   if (isKeyDown(SDLK_s)) {
+       return MOV_DOWN;
+   }
+   if (isKeyDown(SDLK_d)) {
+       return MOV_RIGHT;
+   }
+    return -1;
 }
 
 int moveProcedure(int move) {
@@ -154,6 +148,66 @@ bool writeInBlock(int moveDirection, int newRotation) {
     }
 }
 
+int isCollision(int movDirection, int rotation) {
+    block copyFallingBlock = fallingBlock;
+    int movX = 0;
+    int movY = 0;
+    convertDirections(movDirection, &movX, &movY);
+    copyFallingBlock.xPosition = copyFallingBlock.xPosition + movX;
+    copyFallingBlock.yPosition = copyFallingBlock.yPosition + movY;
+    copyFallingBlock.rotation = rotation;
+    int outOfBox = isOutOfBox(copyFallingBlock);
+    if (outOfBox) {
+        return outOfBox;
+    }
+    if (isBlockCollision(copyFallingBlock)) {
+        return BLOCK_IS_DOWN;
+    }
+    return 0;
+}
+
+bool isBlockCollision(block copyFallingBlock) {
+    for (int line = 0; line < BLOCK_SIZE; ++line) {
+        for (int column = 0; column < BLOCK_SIZE; ++column) {
+            bool isStaticBlock = blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] == 3;
+            bool isMovingBlock = tetrisMatrix[copyFallingBlock.yPosition - copyFallingBlock.midYPos][copyFallingBlock.xPosition - copyFallingBlock.midXPos] == 0;
+            if (isStaticBlock && isMovingBlock) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int isOutOfBox(block copyFallingBlock) {
+    bool leftOut = false;
+    bool rightOut = false;
+    bool downOut = false;
+    if (copyFallingBlock.xPosition - copyFallingBlock.midXPos < 0) {
+        leftOut = true;
+    }
+    for (int line = 0; line < BLOCK_SIZE; ++line) {
+        for (int column = 0; column < BLOCK_SIZE; ++column) {
+            if (blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] != 0) {
+                if ((copyFallingBlock.xPosition - copyFallingBlock.midXPos + column) >= TETRIS_LENGTH) {
+                    rightOut = true;
+                }
+                if ((copyFallingBlock.yPosition - copyFallingBlock.midYPos + line) < 0) {
+                    downOut = true;
+                }
+            }
+        }
+    }
+    if (downOut) {
+        return BLOCK_IS_DOWN;
+    }
+    if (leftOut || rightOut) {
+        return BLOCK_IS_SIDE;
+    } else {
+        return 0;
+    }
+
+}
 
 void drawTetris() {
     drawBasicView();
@@ -257,48 +311,9 @@ void findMid() {
     }
 }
 
-int isOutOfBox(block copyFallingBlock) {
-    bool leftOut;
-    bool rightOut;
-    bool downOut;
-    if (copyFallingBlock.xPosition - copyFallingBlock.midXPos < 0) {
-        leftOut = true;
-    }
-    for (int line = 0; line < SQUARE_SIZE; ++line) {
-        for (int column = 0; column < SQUARE_SIZE; ++column) {
-            if (blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] != 0) {
-                if ((copyFallingBlock.xPosition - copyFallingBlock.midXPos + column) >= TETRIS_LENGTH) {
-                    rightOut = true;
-                }
-                if ((copyFallingBlock.yPosition - copyFallingBlock.midYPos + line) < 0) {
-                    downOut = true;
-                }
-            }
-        }
-    }
-    if (downOut) {
-        return BLOCK_IS_DOWN;
-    }
-    if (leftOut || rightOut) {
-        return BLOCK_IS_SIDE;
-    } else {
-        return 0;
-    }
 
-}
 
-bool isBlockCollision(block copyFallingBlock) {
-    for (int line = 0; line < BLOCK_SIZE; ++line) {
-        for (int column = 0; column < BLOCK_SIZE; ++column) {
-            bool isStaticBlock = blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] == 3;
-            bool isMovingBlock = tetrisMatrix[copyFallingBlock.yPosition - copyFallingBlock.midYPos][copyFallingBlock.xPosition - copyFallingBlock.midXPos] == 0;
-            if (isStaticBlock && isMovingBlock) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
+
 
 void convertDirections(int movDirection, int *movX, int *movY) {
     switch (movDirection) {
@@ -324,23 +339,6 @@ int updateBlock(int movDirection, int newRotation) {
     return 0;
 }
 
-int isCollision(int movDirection, int rotation) {
-    block copyFallingBlock = fallingBlock;
-    int movX = 0;
-    int movY = 0;
-    convertDirections(movDirection, &movX, &movY);
-    copyFallingBlock.xPosition = copyFallingBlock.xPosition + movX;
-    copyFallingBlock.yPosition = copyFallingBlock.yPosition + movY;
-    copyFallingBlock.rotation = rotation;
-    int outOfBox = isOutOfBox(copyFallingBlock);
-    if (outOfBox) {
-        return outOfBox;
-    }
-    if (isBlockCollision(copyFallingBlock)) {
-        return BLOCK_IS_DOWN;
-    }
-    return 0;
-}
 
 
 
