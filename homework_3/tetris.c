@@ -308,9 +308,9 @@ int getYDynamicSquare(int column) {
 void findMid( block *blockName) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
-            if (blocks[*blockName.kind][*blockName.rotation][line][column] == 2) {
-                *blockName.midXPos = column;
-                *blockName.midYPos = line;
+            if (blocks[blockName->kind][blockName->rotation][line][column] == 2) {
+                blockName->midXPos = column;
+                blockName->midYPos = line;
             }
         }
     }
@@ -341,7 +341,7 @@ int updateBlock(int movDirection, int newRotation) {
     fallingBlock.xPosition += movX;
     fallingBlock.yPosition += movY;
     fallingBlock.rotation = newRotation;
-    findMid(*fallingBlock);
+    findMid(&fallingBlock);
     return 0;
 }
 
