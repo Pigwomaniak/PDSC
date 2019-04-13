@@ -108,6 +108,17 @@ void draftBlock() {
     findMid(&fallingBlock);
 }
 
+void findMid( block *blockName) {
+    for (int line = 0; line < BLOCK_SIZE; ++line) {
+        for (int column = 0; column < BLOCK_SIZE; ++column) {
+            if (blocks[blockName->kind][blockName->rotation][line][column] == 2) {
+                blockName->midXPos = column;
+                blockName->midYPos = line;
+            }
+        }
+    }
+}
+
 int detectMove() {
     if (isKeyDown(SDLK_SPACE)) {
         return ROTATE;
@@ -175,6 +186,21 @@ int isCollision(int movDirection, int rotation) {
     return 0;
 }
 
+void convertDirections(int movDirection, int *movX, int *movY) {
+    switch (movDirection) {
+        case MOV_DOWN:
+            *movY = - 1;
+            break;
+        case MOV_LEFT:
+            *movX = - 1;
+            break;
+        case MOV_RIGHT:
+            *movX = 1;
+            break;
+    }
+}
+
+
 bool isBlockCollision(block copyFallingBlock) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
@@ -215,6 +241,28 @@ int isOutOfBox(block copyFallingBlock) {
     } else {
         return 0;
     }
+}
+
+int makeBlockStatic() {
+    for (int line = 0; line < BLOCK_SIZE; ++line) {
+        for (int column = 0; column < BLOCK_SIZE; ++column) {
+            if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
+                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = 3; // -1 jest z dupy
+            }
+        }
+    }
+    return 0;
+}
+
+int updateBlock(int movDirection, int newRotation) {
+    int movX = 0;
+    int movY = 0;
+    convertDirections(movDirection, &movX, &movY);
+    fallingBlock.xPosition += movX;
+    fallingBlock.yPosition += movY;
+    fallingBlock.rotation = newRotation;
+    findMid(&fallingBlock);
+    return 0;
 }
 
 void drawTetris() {
@@ -301,66 +349,3 @@ int getXDynamicSquare(int line) {
 int getYDynamicSquare(int column) {
     return (screenHeight() - (fallingBlock.yPosition - fallingBlock.midYPos +column) * SQUARE_SIZE);
 }
-
-
-
-
-
-
-
-
-void findMid( block *blockName) {
-    for (int line = 0; line < BLOCK_SIZE; ++line) {
-        for (int column = 0; column < BLOCK_SIZE; ++column) {
-            if (blocks[blockName->kind][blockName->rotation][line][column] == 2) {
-                blockName->midXPos = column;
-                blockName->midYPos = line;
-            }
-        }
-    }
-}
-
-
-
-
-
-void convertDirections(int movDirection, int *movX, int *movY) {
-    switch (movDirection) {
-        case MOV_DOWN:
-            *movY = - 1;
-            break;
-        case MOV_LEFT:
-            *movX = - 1;
-            break;
-        case MOV_RIGHT:
-            *movX = 1;
-            break;
-    }
-}
-
-int updateBlock(int movDirection, int newRotation) {
-    int movX = 0;
-    int movY = 0;
-    convertDirections(movDirection, &movX, &movY);
-    fallingBlock.xPosition += movX;
-    fallingBlock.yPosition += movY;
-    fallingBlock.rotation = newRotation;
-    findMid(&fallingBlock);
-    return 0;
-}
-
-int makeBlockStatic() {
-    for (int line = 0; line < BLOCK_SIZE; ++line) {
-        for (int column = 0; column < BLOCK_SIZE; ++column) {
-            if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
-                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = 3; // -1 jest z dupy
-            }
-        }
-    }
-    return 0;
-}
-
-
-
-
-
