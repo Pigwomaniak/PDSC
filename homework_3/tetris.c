@@ -101,8 +101,8 @@ void startTetris() {
 
 void draftBlock() {
     fallingBlock = nextBlock;
-    nextBlock.kind = rand() % NUMBER_OF_BLOCKS;
-    nextBlock.rotation = rand() % NUMBER_OF_ROTATIONS;
+    nextBlock.kind = (fallingBlock.kind + 1) % 7; //rand() % NUMBER_OF_BLOCKS;
+    nextBlock.rotation = 0; //rand() % NUMBER_OF_ROTATIONS;
     fallingBlock.xPosition = TETRIS_LENGTH / 2;
     fallingBlock.yPosition = TETRIS_HEIGHT - 1;
     findMid(&fallingBlock);
@@ -166,7 +166,11 @@ int isCollision(int movDirection, int rotation) {
         return outOfBox;
     }
     if (isBlockCollision(copyFallingBlock)) {
-        return BLOCK_IS_DOWN;
+        if (movDirection == MOV_DOWN) {
+            return BLOCK_IS_DOWN;
+        } else {
+            return BLOCK_IS_SIDE;
+        }
     }
     return 0;
 }
@@ -174,8 +178,8 @@ int isCollision(int movDirection, int rotation) {
 bool isBlockCollision(block copyFallingBlock) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
-            bool isStaticBlock = blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] == 3;
-            bool isMovingBlock = tetrisMatrix[copyFallingBlock.yPosition - copyFallingBlock.midYPos][copyFallingBlock.xPosition - copyFallingBlock.midXPos] == 0;
+            bool isStaticBlock = tetrisMatrix[copyFallingBlock.yPosition - copyFallingBlock.midYPos + line - 1][copyFallingBlock.xPosition - copyFallingBlock.midXPos + column] != 0; // -1 z dupy
+            bool isMovingBlock = blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] != 0;
             if (isStaticBlock && isMovingBlock) {
                 return true;
             }
@@ -349,7 +353,7 @@ int makeBlockStatic() {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
             if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
-                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line][fallingBlock.xPosition -fallingBlock.midXPos + column] = 3;
+                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = 3; // -1 jest z dupy
             }
         }
     }
