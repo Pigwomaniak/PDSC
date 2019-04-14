@@ -66,13 +66,11 @@ int makeBlockStatic();
 int deleteFullLine();
 bool isLineFull(int line);
 int lineMoveDown(int lineToDelete);
-
-
-
+void endTetris();
 
 static block fallingBlock;
 static block nextBlock;
-
+bool gameOver = false;
 
 static int tetrisMatrix[TETRIS_HEIGHT][TETRIS_LENGTH];
 extern const char blocks [7 /*kind */ ][4 /* rotation */ ][4][4];
@@ -85,7 +83,7 @@ int main() {
         exit(3);
     }
     start();
-    while (!isKeyDown(SDLK_ESCAPE)) {
+    while ((!isKeyDown(SDLK_ESCAPE)) && (!gameOver)) {
 
         time(&actualTime);
         timeDifference = difftime(actualTime, startMovPart);
@@ -93,7 +91,6 @@ int main() {
             moveProcedure(MOV_DOWN);
             time(&startMovPart);
         }
-
         int move = detectMove();
         if (move != -1) {
             moveProcedure(move);
@@ -103,6 +100,7 @@ int main() {
         drawTetris();
         updateScreen();
     }
+    endTetris();
     return 0;
 }
 
@@ -225,7 +223,6 @@ void convertDirections(int movDirection, int *movX, int *movY) {
     }
 }
 
-
 bool isBlockCollision(block copyFallingBlock) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
@@ -272,6 +269,10 @@ int makeBlockStatic() {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
             if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
+                if ((fallingBlock.yPosition - fallingBlock.midYPos + line - 1) >= TETRIS_HEIGHT) {
+                    gameOver = true;
+                    return 1;
+                }
                 tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = STATIC_SQUARE; // -1 jest z dupy
             }
         }
@@ -356,6 +357,13 @@ void drawDynamicBlock() {
             }
         }
     }
+}
+
+void endTetris() {
+    filledRect(0, 0, screenWidth() - 1, screenHeight() - 1, BLACK);
+    textout(screenWidth() / 2, screenHeight() / 2, "YOU LOST!", WHITE);
+    updateScreen();
+    while (!isKeyDown(SDLK_ESCAPE)) {};
 }
 
 int getXPositionSquare(int x) {
