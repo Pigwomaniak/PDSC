@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define TETRIS_HEIGHT 20
 #define TETRIS_LENGTH 10
@@ -18,8 +19,13 @@
 #define MOV_LEFT 2
 #define MOV_DOWN 3
 #define ROTATE 4
+#define MOV_FULL_DOWN 5
 #define BLOCK_IS_DOWN 1
 #define BLOCK_IS_SIDE 2
+#define TIME_FOR_MOV 0.5 // time in seconds
+#define STATIC_SQUARE 3
+#define MID_SQUARE 2
+#define PROGRAM_DELAY_TIME_MS 130
 
 typedef struct block {
     int kind;
@@ -57,6 +63,11 @@ int moveProcedure(int move);
 int updateBlock(int movDirection, int newRotation);
 int detectMove();
 int makeBlockStatic();
+int deleteFullLine();
+bool isLineFull(int line);
+int lineMoveDown(int lineToDelete);
+
+
 
 
 static block fallingBlock;
@@ -67,20 +78,30 @@ static int tetrisMatrix[TETRIS_HEIGHT][TETRIS_LENGTH];
 extern const char blocks [7 /*kind */ ][4 /* rotation */ ][4][4];
 
 int main() {
-
+    time_t startMovPart, actualTime;
+    double timeDifference;
+    time(&startMovPart);
     if(initGraph()) {
         exit(3);
     }
     start();
-    tetrisMatrix[1][1] = 3;
     while (!isKeyDown(SDLK_ESCAPE)) {
+
+        time(&actualTime);
+        timeDifference = difftime(actualTime, startMovPart);
+        if (timeDifference > TIME_FOR_MOV) {
+            moveProcedure(MOV_DOWN);
+            time(&startMovPart);
+        }
+
         int move = detectMove();
         if (move != -1) {
             moveProcedure(move);
         }
+        SDL_Delay(PROGRAM_DELAY_TIME_MS);
+        deleteFullLine();
         drawTetris();
         updateScreen();
-        getkey();
     }
     return 0;
 }
@@ -104,14 +125,14 @@ void draftBlock() {
     nextBlock.kind = (fallingBlock.kind + 1) % 7; //rand() % NUMBER_OF_BLOCKS;
     nextBlock.rotation = 0; //rand() % NUMBER_OF_ROTATIONS;
     fallingBlock.xPosition = TETRIS_LENGTH / 2;
-    fallingBlock.yPosition = TETRIS_HEIGHT - 1;
+    fallingBlock.yPosition = TETRIS_HEIGHT;
     findMid(&fallingBlock);
 }
 
 void findMid( block *blockName) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
-            if (blocks[blockName->kind][blockName->rotation][line][column] == 2) {
+            if (blocks[blockName->kind][blockName->rotation][line][column] == MID_SQUARE) {
                 blockName->midXPos = column;
                 blockName->midYPos = line;
             }
@@ -127,7 +148,7 @@ int detectMove() {
         return MOV_LEFT;
     }
     if (isKeyDown(SDLK_s)) {
-        return MOV_DOWN;
+        return MOV_FULL_DOWN;
     }
     if (isKeyDown(SDLK_d)) {
         return MOV_RIGHT;
@@ -138,12 +159,16 @@ int detectMove() {
 int moveProcedure(int move) {
     int direction = 0;
     int newRotation = fallingBlock.rotation;
-    if(move != ROTATE) {
+    if((move == MOV_LEFT) || (move == MOV_RIGHT) || (move == MOV_DOWN)) {
         direction = move;
-    } else {
+        writeInBlock(direction, newRotation);
+    } else if (move == ROTATE){
         newRotation = (fallingBlock.rotation + 1) % 4;
+        writeInBlock(direction, newRotation);
+    } else if (move == MOV_FULL_DOWN) {
+        while (writeInBlock(MOV_DOWN, newRotation) && !isKeyDown(SDLK_ESCAPE)) {}
     }
-    writeInBlock(direction, newRotation);
+
     return 0;
 }
 
@@ -157,7 +182,7 @@ bool writeInBlock(int moveDirection, int newRotation) {
     } else if(blockStatus == BLOCK_IS_DOWN) {
         makeBlockStatic();
         draftBlock();
-        return 1;
+        return 0;
     } else {
         return 0;
     }
@@ -247,7 +272,7 @@ int makeBlockStatic() {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
             if (blocks[fallingBlock.kind][fallingBlock.rotation][line][column] != 0) {
-                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = 3; // -1 jest z dupy
+                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = STATIC_SQUARE; // -1 jest z dupy
             }
         }
     }
@@ -262,6 +287,36 @@ int updateBlock(int movDirection, int newRotation) {
     fallingBlock.yPosition += movY;
     fallingBlock.rotation = newRotation;
     findMid(&fallingBlock);
+    return 0;
+}
+
+int deleteFullLine() {
+    for (int line = 0; line < TETRIS_HEIGHT; ++line) {
+        if(isLineFull(line)) {
+            lineMoveDown(line--);
+        }
+    }
+    return 0;
+}
+
+bool isLineFull(int line) {
+    for (int column = 0; column < TETRIS_LENGTH; ++column) {
+        if(tetrisMatrix[line][column] == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int lineMoveDown(int lineToDelete) {
+    for (int line = lineToDelete; line < TETRIS_HEIGHT - 1; ++line) {
+        for (int column = 0; column < TETRIS_LENGTH; ++column) {
+            tetrisMatrix[line][column] = tetrisMatrix[line + 1][column];
+        }
+    }
+    for (int column = 0; column < TETRIS_LENGTH; ++column) {
+        tetrisMatrix[TETRIS_HEIGHT - 1][column] = 0;
+    }
     return 0;
 }
 
@@ -317,9 +372,9 @@ int detectColor(int color) {
             return BLACK;
         case 1:
             return BLUE;
-        case 2:
+        case MID_SQUARE:
             return GREEN;
-        case 3:
+        case STATIC_SQUARE:
             return RED;
         default:
             return 0;
