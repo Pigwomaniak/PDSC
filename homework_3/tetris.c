@@ -111,8 +111,8 @@ void start() {
 }
 
 void startTetris() {
-    for (int line = 0; line < TETRIS_LENGTH; ++line) {
-        for (int column = 0; column < TETRIS_HEIGHT; ++column) {
+    for (int line = 0; line < TETRIS_HEIGHT; ++line) {
+        for (int column = 0; column < TETRIS_LENGTH; ++column) {
             tetrisMatrix[line][column] = 0;
         }
     }
@@ -226,8 +226,14 @@ void convertDirections(int movDirection, int *movX, int *movY) {
 bool isBlockCollision(block copyFallingBlock) {
     for (int line = 0; line < BLOCK_SIZE; ++line) {
         for (int column = 0; column < BLOCK_SIZE; ++column) {
-            bool isStaticBlock = tetrisMatrix[copyFallingBlock.yPosition - copyFallingBlock.midYPos + line - 1][copyFallingBlock.xPosition - copyFallingBlock.midXPos + column] != 0; // -1 z dupy
-            bool isMovingBlock = blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] != 0;
+            bool isStaticBlock = 0;
+            bool isMovingBlock = 0;
+            int lineArgument = copyFallingBlock.yPosition - copyFallingBlock.midYPos + line - 1;
+            int columnArgument = copyFallingBlock.xPosition - copyFallingBlock.midXPos + column;
+            if((columnArgument < TETRIS_LENGTH) && (columnArgument >= 0) && (lineArgument < TETRIS_HEIGHT) && (lineArgument >=0)){
+                isStaticBlock = tetrisMatrix[lineArgument][columnArgument] != 0;
+                isMovingBlock = blocks[copyFallingBlock.kind][copyFallingBlock.rotation][line][column] != 0;
+            }
             if (isStaticBlock && isMovingBlock) {
                 return true;
             }
@@ -273,7 +279,11 @@ int makeBlockStatic() {
                     gameOver = true;
                     return 1;
                 }
-                tetrisMatrix[fallingBlock.yPosition - fallingBlock.midYPos + line - 1][fallingBlock.xPosition - fallingBlock.midXPos + column] = STATIC_SQUARE; // -1 jest z dupy
+                int lineArgument = fallingBlock.yPosition - fallingBlock.midYPos + line - 1;
+                int columnArgument = fallingBlock.xPosition - fallingBlock.midXPos + column;
+                if ((columnArgument < TETRIS_LENGTH) && (columnArgument >= 0) && (lineArgument < TETRIS_HEIGHT) && (lineArgument >=0)){
+                    tetrisMatrix[lineArgument][columnArgument] = STATIC_SQUARE;
+                }
             }
         }
     }
