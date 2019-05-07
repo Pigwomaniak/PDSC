@@ -3,12 +3,19 @@
 //
 
 #include "determinant.h"
-#include <stdio.h>
-#include <stdlib.h>
-//#include <string.h>
+
 
 int main(int argc, char* argv[]){
-    //FILE *matrixFile;
+    if(argc != 2){
+        printf("file error \n");
+        return 0;
+    }
+    char* matrixFileName = argv[1];
+    printf("\n fileName \n %s \n", matrixFileName);
+    Matrix mainMatrix = readMatrixFile(matrixFileName);
+    printMatrix(mainMatrix);
+    clearMatrix(mainMatrix);
+    printf("\n");
 
 
     return 0;
