@@ -5,4 +5,6 @@
 #ifndef PDSC_DETERMINANT_H
 #define PDSC_DETERMINANT_H
 
+#include "determinantFun.h"
+
 #endif //PDSC_DETERMINANT_H

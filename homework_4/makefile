@@ -1,14 +1,15 @@
-all: determinant.o
+all: determinant
 
-determinant: determinant.o primlib.o
-	/opt/boundschecking-gcc/bin/gcc -fbounds-checking -g $^ -o $@ -lm -lSDL -lpthread -lSDL_gfx
+determinant: determinant.o determinantFun.o
+	gcc -g $^ -o $@ -lm -lSDL -lpthread -lSDL_gfx
 
 .c.o:
-	/opt/boundschecking-gcc/bin/gcc -I /opt/boundschecking-gcc/include -fbounds-checking -g -Wall -pedantic -std=c99 -c -D_REENTRANT $<
+	gcc -g -Wall -pedantic -std=c99 -c -D_REENTRANT $<
 
-primlib.o: primlib.c primlib.h
+determinantFun.o: determinantFun.c determinantFun.h
 
-determinant.o: determinant.c primlib.h
+determinant.o: determinant.c determinantFun.h determinant.h
 
 clean:
-	-rm primlib.o determinant.o determinant
+	-rm determinantFun.o determinant.o determinant
+

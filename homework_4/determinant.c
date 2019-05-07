@@ -11,6 +11,6 @@ int main(int argc, char* argv[]){
     //FILE *matrixFile;
 
 
-    retur 0;
+    return 0;
 }
 
