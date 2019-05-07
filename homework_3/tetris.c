@@ -73,7 +73,7 @@ static block nextBlock;
 bool gameOver = false;
 
 static int tetrisMatrix[TETRIS_HEIGHT][TETRIS_LENGTH];
-extern const char blocks [7 /*kind */ ][4 /* rotation */ ][4][4];
+extern /*static const*/ char blocks [7 /*kind */ ][4 /* rotation */ ][4][4];
 
 int main() {
     time_t startMovPart, actualTime;
