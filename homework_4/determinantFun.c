@@ -52,3 +52,28 @@ void printMatrix(Matrix matrix){
         printf("\n");
     }
 }
+
+double determinantCalc(Matrix tab){
+    double det;
+    if(tab.size == 1){
+        det = tab.matrix[0];
+    } else{
+        for (int column = 0; column < tab.size; ++column) {
+
+        }
+    }
+    return det;
+}
+
+Matrix createSmallTab(Matrix bigTab, int columnToDelete){
+    Matrix smallTab;
+    smallTab.size = bigTab.size - 1;
+    smallTab = createMatrix(smallTab);
+    for (int line = 1; line < smallTab.size; ++line) {
+        for (int column = 0; column < smallTab.size; ++column) {
+
+        }
+    }
+
+    return smallTab
+}
