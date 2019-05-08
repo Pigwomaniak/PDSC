@@ -54,6 +54,8 @@ void printMatrix(Matrix matrix){
 }
 
 double determinantCalc(Matrix tab){
+    //printMatrix(tab);
+    //printf("\n");
     double det = 0.0;
     if(tab.size == 1){
         det = tab.matrix[0];
@@ -61,13 +63,13 @@ double determinantCalc(Matrix tab){
     } else{
         for (int column = 0; column < tab.size; ++column) {
             Matrix smallTab = createSmallTab(tab, column);
-            det += determinantCalc(smallTab) * pow( (-1.0), (1.0 + (double)column + 1.0)) * getMatrix(tab.matrix, tab.size, 0, column);
-            //printf("kolejne determinanty = %lf\n", det);
-            printMatrix(smallTab);
+            det += determinantCalc(smallTab) * pow((-1), (1 + column + 1)) * getMatrix(tab.matrix, tab.size, 0, column);
             clearMatrix(smallTab);
         }
     }
-
+    //printf("kolejne determinanty = %lf\n", det);
+    //printMatrix(tab);
+    //printf("\n");
     return det;
 }
 
@@ -78,8 +80,8 @@ Matrix createSmallTab(Matrix bigTab, int columnToDelete){
     smallTab = createMatrix(smallTab);
     //printf("creating smal tab size = %u\n", smallTab.size);
     int dataNumber = 0;
-    for (int line = 1; line < smallTab.size; ++line) {
-        for (int column = 0; column < smallTab.size; ++column) {
+    for (int line = 1; line < bigTab.size; ++line) {
+        for (int column = 0; column < bigTab.size; ++column) {
             if(column != columnToDelete) {
                 smallTab.matrix[dataNumber++] = getMatrix(bigTab.matrix, bigTab.size, line, column);
             }

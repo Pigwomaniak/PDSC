@@ -14,12 +14,13 @@ int main(int argc, char* argv[]){
     printf("\n fileName \n %s \n", matrixFileName);
     Matrix mainMatrix = readMatrixFile(matrixFileName);
     printMatrix(mainMatrix);
-    clearMatrix(mainMatrix);
+
     printf("\n");
 
     double det = 5.0;
     det = determinantCalc(mainMatrix);
     printf("Determinant = %lf \n", det);
+    clearMatrix(mainMatrix);
 
     return 0;
 }
