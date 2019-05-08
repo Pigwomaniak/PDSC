@@ -7,9 +7,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 
-#define ERROR (sizeof(int))
+#define ERROR 999
 
 
 FILE *filePointer;
@@ -25,5 +26,6 @@ void clearMatrix(Matrix matrix);
 void printMatrix(Matrix matrix);
 double getMatrix(double *matrix, unsigned size, int line, int column);
 double determinantCalc(Matrix tab);
+Matrix createSmallTab(Matrix bigTab, int columnToDelete);
 
 #endif //PDSC_DETERMINANTFUN_H

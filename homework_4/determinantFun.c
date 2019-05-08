@@ -25,8 +25,8 @@ Matrix readMatrixFile(char *matrixFileName){
 }
 
 Matrix createMatrix(Matrix matrix){
-    if((matrix.matrix = (double*)malloc(matrix.size * sizeof(double))) == NULL){
-        printf("MEMORY ALLOCATION ERROR");
+    if((matrix.matrix = (double*)malloc(matrix.size * matrix.size * sizeof(double))) == NULL){ // sprawdzić czy odpowiednia ilość jest
+        printf("MEMORY ALLOCATION ERROR \n");
         exit(0);
     }
     return matrix;
@@ -54,26 +54,37 @@ void printMatrix(Matrix matrix){
 }
 
 double determinantCalc(Matrix tab){
-    double det;
+    double det = 0.0;
     if(tab.size == 1){
         det = tab.matrix[0];
+        //printf("pojedynczy determinant = %lf\n", tab.matrix[0]);
     } else{
         for (int column = 0; column < tab.size; ++column) {
-
+            Matrix smallTab = createSmallTab(tab, column);
+            det += determinantCalc(smallTab) * pow( (-1.0), (1.0 + (double)column + 1.0)) * getMatrix(tab.matrix, tab.size, 0, column);
+            //printf("kolejne determinanty = %lf\n", det);
+            printMatrix(smallTab);
+            clearMatrix(smallTab);
         }
     }
+
     return det;
 }
 
 Matrix createSmallTab(Matrix bigTab, int columnToDelete){
+
     Matrix smallTab;
     smallTab.size = bigTab.size - 1;
     smallTab = createMatrix(smallTab);
+    //printf("creating smal tab size = %u\n", smallTab.size);
+    int dataNumber = 0;
     for (int line = 1; line < smallTab.size; ++line) {
         for (int column = 0; column < smallTab.size; ++column) {
-
+            if(column != columnToDelete) {
+                smallTab.matrix[dataNumber++] = getMatrix(bigTab.matrix, bigTab.size, line, column);
+            }
         }
     }
 
-    return smallTab
+    return smallTab;
 }

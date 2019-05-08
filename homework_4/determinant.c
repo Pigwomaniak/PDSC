@@ -17,7 +17,11 @@ int main(int argc, char* argv[]){
     clearMatrix(mainMatrix);
     printf("\n");
 
+    double det = 5.0;
+    det = determinantCalc(mainMatrix);
+    printf("Determinant = %lf \n", det);
 
     return 0;
 }
+
 
