@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 
 
 #define ERROR 999
@@ -27,5 +28,6 @@ void printMatrix(Matrix matrix);
 double getMatrix(double *matrix, unsigned size, int line, int column);
 double determinantCalc(Matrix tab);
 Matrix createSmallTab(Matrix bigTab, int columnToDelete);
+
 
 #endif //PDSC_DETERMINANTFUN_H

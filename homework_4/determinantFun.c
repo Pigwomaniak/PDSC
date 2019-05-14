@@ -10,15 +10,22 @@ Matrix readMatrixFile(char *matrixFileName){
     if((filePointer = fopen(matrixFileName, "r")) == NULL){
         printf("FILE OPEN ERROR \n");
     } else{
-        fscanf(filePointer, "%u", &matrix.size);
+        if (0 == fscanf(filePointer, "%u", &matrix.size)){
+            printf("NO PROPER SIZE \n");
+            exit(0);
+        }
         printf("matrix size = %u \n", matrix.size);
         matrix = createMatrix(matrix);
         double temporary;
         for (int i = 0; i < (matrix.size * matrix.size); ++i) {
-            fscanf(filePointer, "%lf", &temporary);
+            if(0 == fscanf(filePointer, "%lf", &temporary)){
+                printf("NO PROPER SIZE OF FILE\n");
+                exit(0);
+            }
             matrix.matrix[i]=temporary;
             //printf("%lf %lf \n", temporary, matrix.matrix[i]);
         }
+
     }
     fclose(filePointer);
     return matrix;

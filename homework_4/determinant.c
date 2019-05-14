@@ -14,10 +14,9 @@ int main(int argc, char* argv[]){
     printf("\n fileName \n %s \n", matrixFileName);
     Matrix mainMatrix = readMatrixFile(matrixFileName);
     printMatrix(mainMatrix);
-
     printf("\n");
 
-    double det = 5.0;
+    double det;
     det = determinantCalc(mainMatrix);
     printf("Determinant = %lf \n", det);
     clearMatrix(mainMatrix);
