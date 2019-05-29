@@ -12,6 +12,7 @@
 #define INVALID_NUMBER -99
 #define MINOR_X -2
 #define ADD_SIGN -3
+#define BLANK -4
 
 
 int decodeValue(char inVal, int base);
@@ -29,6 +30,7 @@ strtol (const char *nPtr, char **endPtr, int base)
     int normalNumbers = 0;
     int startNumberPosition = 0;
     bool isNegative = false;
+    bool noBase = false;
 
     if(stringSize == 0){
         return 0;
@@ -41,30 +43,37 @@ strtol (const char *nPtr, char **endPtr, int base)
         }
         return 0L;
     }
-
+    if(base == 0){
+        base = 10;
+        noBase = true;
+    }
+    bool sign = false;
     for (int i = 0; i < stringSize; ++i) {
         valuesOfChars[i] = decodeValue(nPtr[i], base);
         if (valuesOfChars[i] == ADD_SIGN && startNumberPosition == i){
             startNumberPosition++;
-        }
-        if(valuesOfChars[i] == NEGATIVE_NUMBER && startNumberPosition == i) {
+            sign = true;
+        } else if(valuesOfChars[i] == NEGATIVE_NUMBER && startNumberPosition == i) {
             isNegative = true;
             startNumberPosition++;
-        }
-        if(valuesOfChars[i] >= 0){
+            sign = true;
+        } else if (valuesOfChars[i] == BLANK && startNumberPosition == i && !sign){
+            startNumberPosition++;
+        } else if(valuesOfChars[i] >= 0){
             normalNumbers++;
+            if(noBase && startNumberPosition == i && valuesOfChars[startNumberPosition + 1] == MINOR_X && valuesOfChars[startNumberPosition] == 0 && stringSize > startNumberPosition + 2){
+                startNumberPosition += 2;
+                normalNumbers--;
+            }
         }
-    }
-    if(valuesOfChars[startNumberPosition+1] == MINOR_X && valuesOfChars[startNumberPosition] == 0 && stringSize > startNumberPosition+2){
-        startNumberPosition += 2;
-        normalNumbers--;
+
     }
     int endNumberPosition = startNumberPosition;
     while (endNumberPosition < stringSize && valuesOfChars[endNumberPosition] >= 0){
         endNumberPosition++;
     }
 
-    //printf(" %d %d %d ",startNumberPosition,endNumberPosition, stringSize);
+    printf(" %d %d %d ",startNumberPosition,endNumberPosition, stringSize);
 
     int power = 0;
 
@@ -83,11 +92,17 @@ strtol (const char *nPtr, char **endPtr, int base)
             sPow = pow5(xPow, yPow);
             if((((LONG_MAX - finalNumber) / sPow) < valuesOfChars[j]) && (!isNegative)){
                 errno = ERANGE;
-                return 0L;
+                if(endPtr){
+                    *endPtr = (char*)(nPtr + endNumberPosition);
+                }
+                return LONG_MAX;
             }
             if((((LONG_MIN + finalNumber) / sPow) > -valuesOfChars[j]) && (isNegative)){
                 errno = ERANGE;
-                return 0L;
+                if(endPtr){
+                    *endPtr = (char*)(nPtr + endNumberPosition);
+                }
+                return LONG_MIN;
             }
 
             finalNumber += valuesOfChars[j] * sPow;
@@ -101,12 +116,10 @@ strtol (const char *nPtr, char **endPtr, int base)
         finalNumber = -finalNumber;
     }
 
-    if(endNumberPosition == stringSize && endPtr != NULL){
-        *endPtr = (char*)(nPtr + (int)endNumberPosition);
-    } else {
-        if(endPtr)
-        *endPtr = (char*)(nPtr + (int)endNumberPosition);
-    }
+
+    if(endPtr)
+    *endPtr = (char*)(nPtr + (int)endNumberPosition);
+
     return finalNumber;
 }
 
@@ -130,8 +143,11 @@ int decodeValue(char inVal, int base){
     if(inVal == 'x'){
         return MINOR_X;
     }
-    if((inVal == '+') || (inVal == 32) || (inVal ==  9) || (inVal ==  10))
+    if((inVal == '+'))
         return ADD_SIGN;
+    if((inVal == ' ') || (inVal ==  '\t') || (inVal ==  '\n')){
+        return BLANK;
+    }
     return INVALID_NUMBER;
 }
 
