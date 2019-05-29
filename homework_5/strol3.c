@@ -11,48 +11,34 @@ long pow5(long x, int y);
 
 long
 strtol (const char *nPtr, char **endPtr, int base){
+    errno = 0
+
     long output;
     const char *tnPtr = nPtr;
-    size_t stringSize = strlen(nPtr);
-    long tabOfNumbers[stringSize];
+    const char *beginNumber = NULL;
 
-    while (*nptr++){
-
+    while ((*nptr = ' ') || (*nptr = '\n') || (*nptr = '\t')){
+        nptr++;
     }
+    if(base == 0){
+        base = 10;
+        if(*nPtr == 0){
+            base = 8;
+            nPtr++;
+            if(*nPtr == 'x'){
+                base = 16;
+                nPtr++;
+            }
+        }
+    }
+    beginNumber = nPtr;
+    if(base < 2 || base > 36){
+        errno = EINVAL;
+        *endPtr = (char*)nPtr;
+        return 0L;
+    }
+    //while()
 
 
     return output;
-}
-int decodeValue(char inVal, int base){
-    int outVal;
-    if((inVal >= '0') && (inVal <= '9')){
-        if((inVal - '0') < base){
-            return inVal - '0';
-        }
-    }
-    if((inVal >= 'A') && (inVal <= 'Z')){
-        outVal = inVal - 'A' + 10;
-        if(outVal < base){
-            return outVal;
-        }
-    }
-    if(inVal == '-'){
-        return NEGATIVE_NUMBER;
-    }
-    if(inVal == 'x'){
-        return MINOR_X;
-    }
-    if(inVal == '+'){
-        return POSITIVE_NUMBER;
-    }
-    return INVALID_NUMBER;
-}
-
-long pow5(long x, int y){
-    long final = 1;
-    for(int i = 0; i < y; ++i){
-        final = final * x;
-    }
-    //printf("pow5 y= %d final= %ld ", y, final);
-    return final;
 }

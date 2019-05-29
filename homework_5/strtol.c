@@ -1,161 +1,83 @@
-/* dummy implementation of strtol */
-
-
+//
+// Created by maciek on 28/05/19.
+//
 #include <string.h>
 #include <stdbool.h>
-#include <math.h>
 #include <errno.h>
 #include <limits.h>
 
-#define MAX_BASE 36
-#define NEGATIVE_NUMBER -1
-#define INVALID_NUMBER -99
-#define MINOR_X -2
-#define ADD_SIGN -3
-#define BLANK -4
 
 
 int decodeValue(char inVal, int base);
 long pow5(long x, int y);
 
 
-
 long
-strtol (const char *nPtr, char **endPtr, int base)
-{
+strtol (const char *nPtr, char **endPtr, int base){
     errno = 0;
-    size_t stringSize = strlen(nPtr);
-    long finalNumber = 0;
-    int valuesOfChars[stringSize];
-    int normalNumbers = 0;
-    int startNumberPosition = 0;
-    bool isNegative = false;
-    bool noBase = false;
 
-    if(stringSize == 0){
-        return 0;
+    long output = 0;
+    //const char *tnPtr = nPtr;
+    const char *beginNumber = NULL;
+    bool negative = false;
+
+    while ((*nPtr == ' ') || (*nPtr == '\n') || (*nPtr == '\t')){
+        nPtr++;
     }
-
-    if((base < 0) || (base > MAX_BASE) || (base == 1)){
-        errno = EINVAL;
-        if(endPtr){
-            *endPtr = (char*) nPtr;
-        }
-        return 0L;
+    if(*nPtr == '-'){
+        negative = true;
+        nPtr++;
+    }
+    if(*nPtr == '+'){
+        nPtr++;
     }
     if(base == 0){
         base = 10;
-        noBase = true;
-    }
-    bool sign = false;
-    for (int i = 0; i < stringSize; ++i) {
-        valuesOfChars[i] = decodeValue(nPtr[i], base);
-        if (valuesOfChars[i] == ADD_SIGN && startNumberPosition == i){
-            startNumberPosition++;
-            sign = true;
-        } else if(valuesOfChars[i] == NEGATIVE_NUMBER && startNumberPosition == i) {
-            isNegative = true;
-            startNumberPosition++;
-            sign = true;
-        } else if (valuesOfChars[i] == BLANK && startNumberPosition == i && !sign){
-            startNumberPosition++;
-        } else if(valuesOfChars[i] >= 0){
-            normalNumbers++;
-            if(noBase && startNumberPosition == i && valuesOfChars[startNumberPosition + 1] == MINOR_X && valuesOfChars[startNumberPosition] == 0 && stringSize > startNumberPosition + 2){
-                startNumberPosition += 2;
-                normalNumbers--;
+        if(*nPtr == 0){
+            base = 8;
+            nPtr++;
+            if(*nPtr == 'x'){
+                base = 16;
+                nPtr++;
             }
         }
-
     }
-    int endNumberPosition = startNumberPosition;
-    while (endNumberPosition < stringSize && valuesOfChars[endNumberPosition] >= 0){
-        endNumberPosition++;
-    }
-
-    printf(" %d %d %d ",startNumberPosition,endNumberPosition, stringSize);
-
-    int power = 0;
-
-
-    for (int j = stringSize - 1; j >= startNumberPosition ; --j) {
-        if(valuesOfChars[j] >= 0){
-            long sPow = 1;
-            long xPow = base;
-            int yPow = power++;
-            /*
-            for (int p = 0; p < yPow; ++p) {
-                sPow = sPow * xPow;
-            }
-            */
-
-            sPow = pow5(xPow, yPow);
-            if((((LONG_MAX - finalNumber) / sPow) < valuesOfChars[j]) && (!isNegative)){
-                errno = ERANGE;
-                if(endPtr){
-                    *endPtr = (char*)(nPtr + endNumberPosition);
-                }
-                return LONG_MAX;
-            }
-            if((((LONG_MIN + finalNumber) / sPow) > -valuesOfChars[j]) && (isNegative)){
-                errno = ERANGE;
-                if(endPtr){
-                    *endPtr = (char*)(nPtr + endNumberPosition);
-                }
-                return LONG_MIN;
-            }
-
-            finalNumber += valuesOfChars[j] * sPow;
+    beginNumber = nPtr;
+    if(base < 2 || base > 36){
+        errno = EINVAL;
+        if(endPtr){
+            *endPtr = (char*)nPtr;
         }
-    }
-
-    if(normalNumbers == 0){
         return 0L;
     }
-    if(isNegative){
-        finalNumber = -finalNumber;
+    while((((*nPtr - '0') > 0) && ((*nPtr - '0') < 9)) || (((*nPtr - 'A') > 0) && (*nPtr - 'A') < base)){
+        nPtr++;
     }
-
-
-    if(endPtr)
-    *endPtr = (char*)(nPtr + (int)endNumberPosition);
-
-    return finalNumber;
-}
-
-int decodeValue(char inVal, int base){
-    int outVal;
-    //printf("%d ",(int)inVal);
-    if((inVal >= '0') && (inVal <= '9')){
-        if((inVal - '0') < base){
-            return inVal - '0';
+    if(endPtr){
+        *endPtr = (char*)nPtr;
+        nPtr--;
+    }
+    while (nPtr >= beginNumber){
+        if((((LONG_MAX - output) / (*endPtr - nPtr - 1)) > *nPtr) && !negative){
+            errno = ERANGE;
+            if(endPtr){
+                *endPtr = (char*)nPtr;
+            }
+            return LONG_MAX;
         }
-    }
-    if((inVal >= 'A') && (inVal <= 'Z')){
-        outVal = inVal - 'A' + 10;
-        if(outVal < base){
-            return outVal;
+        if(((LONG_MIN /(*nPtr * (*endPtr - nPtr - 1))) > -output) && negative) {
+            errno = ERANGE;
+            if (endPtr) {
+                *endPtr = (char *) nPtr;
+            }
+            return LONG_MAX;
         }
+        output += *nPtr * (*endPtr - nPtr - 1);
+        nPtr--;
     }
-    if(inVal == '-'){
-        return NEGATIVE_NUMBER;
+    if(negative){
+        output = -output;
     }
-    if(inVal == 'x'){
-        return MINOR_X;
-    }
-    if((inVal == '+'))
-        return ADD_SIGN;
-    if((inVal == ' ') || (inVal ==  '\t') || (inVal ==  '\n')){
-        return BLANK;
-    }
-    return INVALID_NUMBER;
-}
 
-long pow5(long x, int y){
-    long final = 1;
-    for(int i = 0; i < y; ++i){
-        final = final * (long)x;
-    }
-    //printf("pow5 y= %d final= %ld ", y, final);
-    return final;
+    return output;
 }
