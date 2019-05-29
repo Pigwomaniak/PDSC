@@ -5,11 +5,11 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <limits.h>
+#include <math.h>
 
 
-
-int decodeValue(char inVal, int base);
 long pow5(long x, int y);
+
 
 
 long
@@ -60,14 +60,15 @@ strtol (const char *nPtr, char **endPtr, int base){
         nPtr--;
     }
     while (nPtr >= beginNumber){
-        if((((LONG_MAX - output) / (endNumber - nPtr - 1)) > *nPtr) && !negative){
+        long bPower = pow5(base, (endNumber - nPtr - 1));
+        if((((LONG_MAX - output) / bPower) > *nPtr) && !negative){
             errno = ERANGE;
             if(endPtr){
                 *endPtr = (char*)nPtr;
             }
             return LONG_MAX;
         }
-        if(((LONG_MIN /(*nPtr * (endNumber - nPtr - 1))) > -output) && negative) {
+        if(((LONG_MIN /(*nPtr * bPower)) > -output) && negative) {
             errno = ERANGE;
             if (endPtr) {
                 *endPtr = (char *) nPtr;
@@ -82,4 +83,12 @@ strtol (const char *nPtr, char **endPtr, int base){
     }
 
     return output;
+}
+long pow5(long x, int y) {
+    long final = 1;
+    for (int i = 0; i < y; ++i) {
+        final = final * x;
+    }
+    //printf("pow5 y= %d final= %ld ", y, final);
+    return final;
 }
