@@ -19,6 +19,7 @@ strtol (const char *nPtr, char **endPtr, int base){
     long output = 0;
     //const char *tnPtr = nPtr;
     const char *beginNumber = NULL;
+    const char *endNumber = NULL;
     bool negative = false;
 
     while ((*nPtr == ' ') || (*nPtr == '\n') || (*nPtr == '\t')){
@@ -33,7 +34,7 @@ strtol (const char *nPtr, char **endPtr, int base){
     }
     if(base == 0){
         base = 10;
-        if(*nPtr == 0){
+        if(*nPtr == '0'){
             base = 8;
             nPtr++;
             if(*nPtr == 'x'){
@@ -50,29 +51,30 @@ strtol (const char *nPtr, char **endPtr, int base){
         }
         return 0L;
     }
-    while((((*nPtr - '0') > 0) && ((*nPtr - '0') < 9)) || (((*nPtr - 'A') > 0) && (*nPtr - 'A') < base)){
+    while((((*nPtr - '0') >= 0) && ((*nPtr - '0') < base) && ((*nPtr - '0') < 10)) || (((*nPtr - 'A') >= 0) && (*nPtr - 'A') < base - 10)){
         nPtr++;
     }
     if(endPtr){
         *endPtr = (char*)nPtr;
+        endNumber = nPtr;
         nPtr--;
     }
     while (nPtr >= beginNumber){
-        if((((LONG_MAX - output) / (*endPtr - nPtr - 1)) > *nPtr) && !negative){
+        if((((LONG_MAX - output) / (endNumber - nPtr - 1)) > *nPtr) && !negative){
             errno = ERANGE;
             if(endPtr){
                 *endPtr = (char*)nPtr;
             }
             return LONG_MAX;
         }
-        if(((LONG_MIN /(*nPtr * (*endPtr - nPtr - 1))) > -output) && negative) {
+        if(((LONG_MIN /(*nPtr * (endNumber - nPtr - 1))) > -output) && negative) {
             errno = ERANGE;
             if (endPtr) {
                 *endPtr = (char *) nPtr;
             }
             return LONG_MAX;
         }
-        output += *nPtr * (*endPtr - nPtr - 1);
+        output += *nPtr * (endNumber - nPtr - 1);
         nPtr--;
     }
     if(negative){
