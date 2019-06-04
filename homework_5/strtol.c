@@ -51,16 +51,21 @@ strtol (const char *nPtr, char **endPtr, int base){
         if(*nPtr == 'x'){
             newBase = 16;
             nPtr++;
+            if(!((((*nPtr - '0') >= 0) && ((*nPtr - '0') < newBase) && ((*nPtr - '0') < 10)) || (((*nPtr - 'A') >= 0) && (*nPtr - 'A') < base - 10))){
+                //printf("kkk %c ", *nPtr);
+                nPtr--;
+                if(endPtr){
+                    *endPtr = (char*)nPtr;
+                }
+                return 0L;
+
+            }
 
         }
         else
             {
             if(!(((*nPtr - '0') >= 0) && ((*nPtr - '0') < base))){
                 /*
-                if(endPtr){
-                    *endPtr = (char*)nPtr;
-                }
-                return 0L;
                  */
                 nPtr--;
             }
