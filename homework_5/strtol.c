@@ -18,17 +18,10 @@ strtol (const char *nPtr, char **endPtr, int base){
     errno = 0;
 
     long output = 0;
-    //const char *tnPtr = nPtr;
     const char *beginNumber = NULL;
     const char *endNumber = NULL;
     const char *startPtr = nPtr;
     bool negative = false;
-    /*
-    char ** startEndPtr = NULL;
-    if(endPtr){
-        startEndPtr = endPtr;
-    }
-     */
 
     while ((*nPtr == ' ') || (*nPtr == '\n') || (*nPtr == '\t')){
         nPtr++;
@@ -52,21 +45,16 @@ strtol (const char *nPtr, char **endPtr, int base){
             newBase = 16;
             nPtr++;
             if(!((((*nPtr - '0') >= 0) && ((*nPtr - '0') < newBase) && ((*nPtr - '0') < 10)) || (((*nPtr - 'A') >= 0) && (*nPtr - 'A') < base - 10))){
-                //printf("kkk %c ", *nPtr);
                 nPtr--;
                 if(endPtr){
                     *endPtr = (char*)nPtr;
                 }
                 return 0L;
-
             }
-
         }
         else
             {
             if(!(((*nPtr - '0') >= 0) && ((*nPtr - '0') < base))){
-                /*
-                 */
                 nPtr--;
             }
         }
@@ -89,7 +77,7 @@ strtol (const char *nPtr, char **endPtr, int base){
 
     if(endPtr){
         *endPtr = (char*)nPtr;
-    }  //przesunalem nawias o 2 linie w gore
+    }
     endNumber = nPtr;
     nPtr--;
     if(endNumber == beginNumber){
@@ -98,24 +86,17 @@ strtol (const char *nPtr, char **endPtr, int base){
         }
         return 0L;
     }
-    //tu trzeba dodać sprawdzenie czy endNumber jest końcem stringa - jak nie to błąd danych wejsiowych
-    //printf(" baza %d ",base);
-
     while (nPtr >= beginNumber){
         long bPower = pow5(base, (endNumber - nPtr - 1));
-        //printf(" znak %d potega %d ",(int)charToLong(*nPtr), bPower);
-        if(bPower > 0){   //zawsze jest wieksze od 0
+        if(bPower > 0){
             if((((LONG_MAX - output) / bPower) < charToLong(*nPtr)) && !negative){ //zmienilem znak nierownosci
-
                 errno = ERANGE;
                 if(endPtr){
                     *endPtr = (char*) endNumber;
                 }
                 return LONG_MAX;
-
             }
         }
-
         if((charToLong(*nPtr) > 0) && (bPower > 0)) {
             if (((LONG_MIN  + output) / bPower > -charToLong(*nPtr)) && negative) {  //zmienilem caly zapis
                 errno = ERANGE;
@@ -125,33 +106,20 @@ strtol (const char *nPtr, char **endPtr, int base){
                 return LONG_MIN;  //zmienilem na min
             }
         }
-
-
         output += charToLong(*nPtr) * pow5(base, (endNumber - nPtr - 1));
-        //printf(" znak %d ",(int)charToLong(*nPtr));
         nPtr--;
     }
-    /*
-    if(**endPtr != '\0'){
-        *endPtr = (char*)startPtr;
-        return 0L;
-    }
-     */
     if(negative){
         output = -output;
     }
-
     return output;
-
-   // return 5;
-
 }
+
 long pow5(long x, int y) {
     long final = 1;
     for (int i = 0; i < y; ++i) {
-        final = final * x; //tu wcześniej powinno być sprawdzenie czy final nie przekracza longmax/x
+        final = final * x;
     }
-    //printf("pow5 y= %d final= %ld ", y, final);
     return final;
 }
 
