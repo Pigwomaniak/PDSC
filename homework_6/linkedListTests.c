@@ -1,12 +1,11 @@
 //
 // Created by maciek on 11/06/19.
 //
+
+#include "linkedListTests.h"
 #include "linkedListFun.h"
-#include <stddef.h>
-#include <stdio.h>
 
-
-int main(){
+int testInit(){
     struct node *head = NULL;
     struct node *end = NULL;
     struct node *current = NULL;
@@ -17,5 +16,5 @@ int main(){
     printf("\n %d \n", head->data);
 
 
-    return 0;
+    return head->data;
 }
