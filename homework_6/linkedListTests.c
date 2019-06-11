@@ -13,8 +13,6 @@ int testInit(){
     head = init();
     head->data = 1;
 
-    printf("\n %d \n", head->data);
-
 
     return head->data;
 }

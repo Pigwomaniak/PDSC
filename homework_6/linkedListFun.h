@@ -17,7 +17,11 @@ typedef struct node{
 
 struct node* init();
 int length(struct node *head);
-
+void display(struct node *head);
+void destroy(struct node *head);
+void push(struct node **head, int data);
+int pop(struct node *head);
+void append(struct node *head, int data);
 
 
 #endif //PDSC_LINKEDLISTFUN_H
