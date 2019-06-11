@@ -17,3 +17,12 @@ struct node* init(){
 
     return head;
 }
+
+int length(struct node *head){
+    int len = 1;
+    while (head->next != NULL){
+        len++;
+        head = head->next;
+    }
+    return  len;
+}

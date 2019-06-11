@@ -12,10 +12,6 @@ int main(){
     struct node *current = NULL;
 
     head = init();
-    head->data = 1;
-
-    printf("\n %d \n", head->data);
-
 
     return 0;
 }

@@ -16,6 +16,7 @@ typedef struct node{
 
 
 struct node* init();
+int length(struct node *head);
 
 
 
