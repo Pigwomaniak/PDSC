@@ -50,12 +50,15 @@ void append(struct node *head, char* input){\
     } else{
         head = newNode;
     }
-    (head)->data = malloc(sizeof(strlen(input)));
-    if(!(head->data)){
-        exit(0);
+    if(head){
+        (head)->data = malloc(sizeof(strlen(input)));
+        if(!(head->data)){
+            exit(0);
+        }
+        strcpy(head->data, input);
+        head->next = NULL;
     }
-    strcpy(head->data, input);
-    head->next = NULL;
+
 }
 
 void push(struct node **head, char* input){
@@ -63,7 +66,9 @@ void push(struct node **head, char* input){
     if(!newNode){
         exit(0);
     }
-    newNode->next = *head;
+    if(newNode){
+        newNode->next = *head;
+    }
     *head = newNode;
     (*head)->data = malloc(sizeof(strlen(input)));
     if(!((*head)->data)){
