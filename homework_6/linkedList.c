@@ -7,21 +7,19 @@
 
 
 int main(){
-    struct node *head = NULL;
-    struct node *end = NULL;
-    struct node *current = NULL;
-
+    struct node *head;
     head = init();
-    head->data = 0;
 
-    push(&head, 1);
-    push(&head, 2);
-    push(&head, 3);
-    push(&head, 4);
-    push(&head, 5);
+    push(&head, "1");
+
+    push(&head, "12");
+    push(&head, "123");
+    push(&head, "1234");
+    push(&head, "12345");
 
     display(head);
 
     destroy(head);
     return 0;
 }
+

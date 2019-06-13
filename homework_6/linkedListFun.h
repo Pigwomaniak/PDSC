@@ -7,21 +7,24 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 
 typedef struct node{
-    int data;
+    char* data;
     struct node *next;
-};
+} node;
 
 
 struct node* init();
 int length(struct node *head);
 void display(struct node *head);
 void destroy(struct node *head);
-void push(struct node **head, int data);
-int pop(struct node *head);
-void append(struct node *head, int data);
+void push(struct node **head, char *input);
+char* pop(struct node **head);
+void append(struct node *head, char *input);
 
 
 #endif //PDSC_LINKEDLISTFUN_H
+

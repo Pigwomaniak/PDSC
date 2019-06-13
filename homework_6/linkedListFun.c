@@ -6,16 +6,7 @@
 
 
 struct node* init(){
-    struct node *head = NULL;
-    head = malloc(sizeof(struct node));
-    if(!head){
-        exit(0);
-    }
-    if(head){
-        head->next = NULL;
-    }
-
-    return head;
+    return NULL;
 }
 
 int length(struct node *head){
@@ -24,18 +15,66 @@ int length(struct node *head){
         len++;
         head = head->next;
     }
-    return  len;
+    return len;
 }
+
 void display(struct node *head){
     printf("\n List contain:\n");
     while(head){
-        printf("\t%d\n", head->data);
+        printf("\t%s\n", head->data);
         head = head->next;
     }
 }
+
 void destroy(struct node *head){
     while (head){
         struct node *temp = head->next;
+        free(head->data);
         free(head);
         head = temp;
     }
+}
+
+
+void append(struct node *head, char* input){\
+	struct node *newNode = malloc(sizeof(struct node));
+    if(!newNode){
+        exit(0);
+    }
+    if(head){
+        while(head->next){
+            head = head->next;
+        }
+        head->next = newNode;
+    } else{
+        head = newNode;
+    }
+    (head)->data = malloc(sizeof(strlen(input)));
+    if(!(head->data)){
+        exit(0);
+    }
+    strcpy(head->data, input);
+}
+
+void push(struct node **head, char* input){
+    struct node *newNode = malloc(sizeof(struct node));
+    if(!newNode){
+        exit(0);
+    }
+    newNode->next = *head;
+    *head = newNode;
+    (*head)->data = malloc(sizeof(strlen(input)));
+    if(!((*head)->data)){
+        exit(0);
+    }
+    strcpy((*head)->data, input);
+}
+/*
+int pop(struct node **head){
+	int out = (*head)->data;
+
+
+	return out;
+}
+*/
+
