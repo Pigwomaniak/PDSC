@@ -19,6 +19,14 @@ int main(){
 
     display(head);
 
+    append(head, "koza");
+
+    display(head);
+
+    //char *poping = pop(&head);
+    //printf("%s", poping);
+   // display(head);
+
     destroy(head);
     return 0;
 }

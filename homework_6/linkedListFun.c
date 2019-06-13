@@ -46,6 +46,7 @@ void append(struct node *head, char* input){\
             head = head->next;
         }
         head->next = newNode;
+        head = head->next;
     } else{
         head = newNode;
     }
@@ -54,6 +55,7 @@ void append(struct node *head, char* input){\
         exit(0);
     }
     strcpy(head->data, input);
+    head->next = NULL;
 }
 
 void push(struct node **head, char* input){
@@ -70,11 +72,13 @@ void push(struct node **head, char* input){
     strcpy((*head)->data, input);
 }
 /*
-int pop(struct node **head){
-	int out = (*head)->data;
-
-
+char* pop(struct node **head){
+	char *out = (*head)->data;
+    struct node *newHead = (*head)->next;
+    free((*head)->data);
+    free(*head);
+    *head = newHead;
 	return out;
 }
-*/
 
+*/
