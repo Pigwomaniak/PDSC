@@ -11,21 +11,18 @@ int main(){
     head = init();
 
     push(&head, "1");
-
     push(&head, "12");
     push(&head, "123");
     push(&head, "1234");
     push(&head, "12345");
-
-    display(head);
-
     append(head, "koza");
 
     display(head);
 
-    //char *poping = pop(&head);
-    //printf("%s", poping);
-   // display(head);
+    char *poping = pop(&head);
+    printf("%s", poping);
+    free(poping);
+    display(head);
 
     destroy(head);
     return 0;

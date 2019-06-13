@@ -76,14 +76,14 @@ void push(struct node **head, char* input){
     }
     strcpy((*head)->data, input);
 }
-/*
+
 char* pop(struct node **head){
 	char *out = (*head)->data;
     struct node *newHead = (*head)->next;
-    free((*head)->data);
+    //free((*head)->data);
     free(*head);
     *head = newHead;
 	return out;
 }
 
-*/
+
