@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-//#include <stdbool.h>
+
 
 
 typedef struct node{
@@ -26,6 +26,8 @@ void push(struct node **head, char *input);
 char* pop(struct node **head);
 void append(struct node *head, char *input);
 struct node* copy(struct node *head);
+struct node* getNext(struct node **nodePtr);
+void insertNode(struct node **nodePtr, struct node *insNode);
 void reverse(struct node **head);
 
 #endif //PDSC_LINKEDLISTFUN_H
