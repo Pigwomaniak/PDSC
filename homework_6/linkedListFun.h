@@ -24,7 +24,7 @@ void destroy(struct node *head);
 void push(struct node **head, char *input);
 char* pop(struct node **head);
 void append(struct node *head, char *input);
-
+struct node* copy(struct node *head);
 
 #endif //PDSC_LINKEDLISTFUN_H
 

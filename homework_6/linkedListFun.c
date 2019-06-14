@@ -86,4 +86,18 @@ char* pop(struct node **head){
 	return out;
 }
 
+// niedokończone
+struct node* copy(struct node *head){
+    struct node *newHead = NULL;
+    if(head){
+        while (head){
+            struct node *newNode = malloc(sizeof(struct node));
+            if(!newNode){
+                exit(0);
+            }
+        }
+    }
+
+    return newHead;
+}
 
