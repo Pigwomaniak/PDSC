@@ -15,6 +15,7 @@ int main(){
     push(&head, "123");
     push(&head, "1234");
     push(&head, "12345");
+
     append(head, "koza");
 
     display(head);
@@ -24,6 +25,14 @@ int main(){
     free(poping);
     display(head);
 
+    struct node *newHead = init();
+    newHead = copy(head);
+    printf("New List \n");
+    display(newHead);
+
+
+
+    destroy(newHead);
     destroy(head);
     return 0;
 }

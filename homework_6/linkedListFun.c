@@ -51,7 +51,7 @@ void append(struct node *head, char* input){\
         head = newNode;
     }
     if(head){
-        (head)->data = malloc(sizeof(strlen(input)));
+        (head)->data = malloc(strlen(input) + 1);
         if(!(head->data)){
             exit(0);
         }
@@ -70,7 +70,7 @@ void push(struct node **head, char* input){
         newNode->next = *head;
     }
     *head = newNode;
-    (*head)->data = malloc(sizeof(strlen(input)));
+    (*head)->data = malloc(strlen(input) + 1);
     if(!((*head)->data)){
         exit(0);
     }
@@ -86,18 +86,31 @@ char* pop(struct node **head){
 	return out;
 }
 
-// niedokończone
+
 struct node* copy(struct node *head){
     struct node *newHead = NULL;
+    struct node *outHead = NULL;
     if(head){
-        while (head){
-            struct node *newNode = malloc(sizeof(struct node));
-            if(!newNode){
-                exit(0);
+        newHead = malloc(sizeof(struct node));
+        if(!newHead){
+            exit(0);
+        }
+        outHead = newHead;
+        if(newHead) {
+            newHead->data = malloc(strlen(head->data) + 1);
+            strcpy(newHead->data, head->data);
+        }
+        while (head->next){
+            if(newHead) {
+                newHead->next = malloc(sizeof(struct node));
+                newHead->next->data = malloc(strlen(head->next->data) + 1);
+                strcpy(newHead->next->data, head->next->data);
+                newHead->next->next = NULL;
+                head = head->next;
+                newHead = newHead->next;
             }
         }
     }
-
-    return newHead;
+    return outHead;
 }
 
