@@ -26,6 +26,7 @@ void push(struct node **head, char *input);
 char* pop(struct node **head);
 void append(struct node *head, char *input);
 struct node* copy(struct node *head);
+void reverse(struct node **head);
 
 #endif //PDSC_LINKEDLISTFUN_H
 

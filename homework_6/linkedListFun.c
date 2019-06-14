@@ -86,7 +86,6 @@ char* pop(struct node **head){
 	return out;
 }
 
-
 struct node* copy(struct node *head){
     struct node *newHead = NULL;
     struct node *outHead = NULL;
@@ -114,3 +113,58 @@ struct node* copy(struct node *head){
     return outHead;
 }
 
+struct node* getNext(struct node **nodePtr){
+    struct node *outNode = *nodePtr;
+    if(outNode){
+        *nodePtr = outNode->next;
+        outNode->next = NULL;
+    }
+    return outNode;
+}
+
+void insertNode(struct node **nodePtr, struct node *insNode){
+    if(insNode){
+        insNode->next = *nodePtr;
+        *nodePtr = insNode;
+    }
+}
+
+void reverse(struct node **head){
+
+    struct node *newHead = NULL;
+
+    while (*head){
+        insertNode(&newHead, getNext(head));
+    }
+    *head = newHead;
+
+
+    /*
+
+    struct node *startHead = *head;
+    struct node *newHead = NULL;
+
+    struct node *tempHead = startHead;
+
+    while (tempHead->next->next){
+        tempHead = tempHead->next;
+    }
+    newHead = tempHead->next;
+    tempHead->next = NULL;
+    tempHead = startHead;
+    struct node *newTempHead = newHead;
+
+
+    while(tempHead->next) {
+        tempHead = startHead;
+        while (tempHead->next->next) {
+            tempHead = tempHead->next;
+        }
+        newTempHead->next = tempHead->next;
+        tempHead->next = NULL;
+        newTempHead = newTempHead->next;
+    }
+    *head = newHead;
+    */
+
+}

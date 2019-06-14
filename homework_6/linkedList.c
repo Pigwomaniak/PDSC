@@ -19,7 +19,7 @@ int main(){
     append(head, "koza");
 
     display(head);
-
+/*
     char *poping = pop(&head);
     printf("%s", poping);
     free(poping);
@@ -29,10 +29,13 @@ int main(){
     newHead = copy(head);
     printf("New List \n");
     display(newHead);
-
-
-
     destroy(newHead);
+
+*/
+    reverse(&head);
+    display(head);
+
+
     destroy(head);
     return 0;
 }
