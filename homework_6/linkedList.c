@@ -36,9 +36,11 @@ int main(){
     printf("New List \n");
     display(newHead);
     destroy(newHead);
+
     printf("Reversing head \n");
     reverse(&head);
     display(head);
+
     printf("sorting list \n");
     sort(&head);
     display(head);

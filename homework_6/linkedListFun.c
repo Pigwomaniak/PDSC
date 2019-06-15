@@ -85,7 +85,7 @@ char* pop(struct node **head){
     /*
     free((*head)->data);
     char tempStr[strlen((*head)->data)] = strcpy(&tempStr, (*head)->data);
-     return tempStr;
+    return tempStr;
     */
     free(*head);
     *head = newHead;
@@ -125,6 +125,7 @@ void reverse(struct node **head){
     }
     *head = newHead;
 }
+
 struct node** findPreMax(struct node** head){
     if(*head == NULL){
         return NULL;
@@ -139,6 +140,7 @@ struct node** findPreMax(struct node** head){
     }
     return maxNode;
 }
+
 void sort(struct node** head){
     struct node *newHead = NULL;
     while (*head){
