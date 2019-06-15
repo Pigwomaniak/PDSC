@@ -94,31 +94,12 @@ char* pop(struct node **head){
 
 struct node* copy(struct node *head){
     struct node *newHead = NULL;
-    struct node *outHead = NULL;
-    if(head){
-        newHead = malloc(sizeof(struct node));
-        if(!newHead){
-            exit(0);
-        }
-        outHead = newHead;
-        if(newHead) {
-            newHead->data = malloc(strlen(head->data) + 1);
-            strncpy(newHead->data, head->data, strlen(head->data) + 1);
-            newHead->next = NULL;
-            //strncat(head->data, "\0", 1);
-        }
-        while (head->next){
-            if(newHead) {
-                newHead->next = malloc(sizeof(struct node));
-                newHead->next->data = malloc(strlen(head->next->data) + 1);
-                strcpy(newHead->next->data, head->next->data);
-                newHead->next->next = NULL;
-                head = head->next;
-                newHead = newHead->next;
-            }
-        }
+    while (head){
+        push(&newHead, head->data);
+        head = head->next;
     }
-    return outHead;
+    reverse(&newHead);
+    return newHead;
 }
 
 struct node* getNext(struct node **nodePtr){

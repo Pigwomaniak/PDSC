@@ -8,13 +8,13 @@
 
 int main(){
     struct node *head = init();
-/*
+
     push(&head, "jak");
     push(&head, "to jest");
     push(&head, "być");
     push(&head, " Skrybą!! ");
     push(&head, "\n");
-    */
+
     push(&head, "");
 
     printf("push after init \n");
