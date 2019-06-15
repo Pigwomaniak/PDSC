@@ -7,38 +7,39 @@
 
 
 int main(){
-    struct node *head;
-    head = init();
+    struct node *head = init();
+/*
+    push(&head, "jak");
+    push(&head, "to jest");
+    push(&head, "być");
+    push(&head, " Skrybą!! ");
+    push(&head, "\n");
+    */
+    push(&head, "");
 
-    push(&head, "1");
-    push(&head, "A12");
-    push(&head, "zh123");
-    push(&head, "b1234");
-    push(&head, "d12345");
+    printf("push after init \n");
+    display(head);
 
     append(head, "koza");
 
+    printf("after append \n");
     display(head);
-/*
+
     char *poping = pop(&head);
-    printf("%s", poping);
+    printf(" pop contain: %s \n", poping);
     free(poping);
     display(head);
 
+    printf("Copy of first list \n");
     struct node *newHead = init();
     newHead = copy(head);
     printf("New List \n");
     display(newHead);
     destroy(newHead);
-
-
+    printf("Reversing head \n");
     reverse(&head);
     display(head);
-
-    struct node** Max = findPreMax(&head);
-    display(*Max);
-*/
-
+    printf("sorting list \n");
     sort(&head);
     display(head);
 
