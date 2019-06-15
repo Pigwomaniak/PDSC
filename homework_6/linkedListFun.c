@@ -136,3 +136,24 @@ void reverse(struct node **head){
     }
     *head = newHead;
 }
+struct node** findPreMax(struct node** head){
+    if(*head == NULL){
+        return NULL;
+    }
+    struct node **maxNode = head;
+    struct node **current = &((*head)->next);
+    while (*current){
+        if(strcmp((*current)->data, (*maxNode)->data) > 0){
+            maxNode = current;
+        }
+        current = &((*current)->next);
+    }
+    return maxNode;
+}
+void sort(struct node** head){
+    struct node *newHead = NULL;
+    while (*head){
+        insertNode(&newHead, getNext(findPreMax(head)));
+    }
+    *head = newHead;
+}

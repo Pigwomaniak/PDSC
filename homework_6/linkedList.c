@@ -11,10 +11,10 @@ int main(){
     head = init();
 
     push(&head, "1");
-    push(&head, "12");
-    push(&head, "123");
-    push(&head, "1234");
-    push(&head, "12345");
+    push(&head, "A12");
+    push(&head, "zh123");
+    push(&head, "b1234");
+    push(&head, "d12345");
 
     append(head, "koza");
 
@@ -31,10 +31,16 @@ int main(){
     display(newHead);
     destroy(newHead);
 
-*/
+
     reverse(&head);
     display(head);
 
+    struct node** Max = findPreMax(&head);
+    display(*Max);
+*/
+
+    sort(&head);
+    display(head);
 
     destroy(head);
     return 0;

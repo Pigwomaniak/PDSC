@@ -29,6 +29,7 @@ struct node* copy(struct node *head);
 struct node* getNext(struct node **nodePtr);
 void insertNode(struct node **nodePtr, struct node *insNode);
 void reverse(struct node **head);
-
+struct node** findPreMax(struct node** head);
+void sort(struct node** head);
 #endif //PDSC_LINKEDLISTFUN_H
 
