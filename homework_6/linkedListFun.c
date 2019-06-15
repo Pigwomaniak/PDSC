@@ -56,6 +56,7 @@ void append(struct node *head, char* input){\
             exit(0);
         }
         strcpy(head->data, input);
+        strncat(head->data, "\0", 1);
         head->next = NULL;
     }
 
@@ -75,12 +76,17 @@ void push(struct node **head, char* input){
         exit(0);
     }
     strcpy((*head)->data, input);
+    strncat((*head)->data, "\0", 1);
 }
 
 char* pop(struct node **head){
 	char *out = (*head)->data;
     struct node *newHead = (*head)->next;
-    //free((*head)->data);
+    /*
+    free((*head)->data);
+    char tempStr[strlen((*head)->data)] = strcpy(&tempStr, (*head)->data);
+     return tempStr;
+    */
     free(*head);
     *head = newHead;
 	return out;
@@ -97,7 +103,9 @@ struct node* copy(struct node *head){
         outHead = newHead;
         if(newHead) {
             newHead->data = malloc(strlen(head->data) + 1);
-            strcpy(newHead->data, head->data);
+            strncpy(newHead->data, head->data, strlen(head->data) + 1);
+            newHead->next = NULL;
+            //strncat(head->data, "\0", 1);
         }
         while (head->next){
             if(newHead) {
